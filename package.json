@@ -1,0 +1,47 @@
+{
+  "name": "ecommerces-admin",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev --turbopack -p 4200",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "@ckeditor/ckeditor5-build-classic": "^41.4.2",
+    "@ckeditor/ckeditor5-react": "^9.5.0",
+    "@editorjs/editorjs": "^2.30.8",
+    "@editorjs/header": "^2.8.8",
+    "@editorjs/list": "^2.0.6",
+    "@editorjs/quote": "^2.7.6",
+    "@editorjs/raw": "^2.5.1",
+    "@reduxjs/toolkit": "^2.7.0",
+    "@tailwindcss/postcss": "^4.1.4",
+    "axios": "^1.9.0",
+    "draft-js": "^0.11.7",
+    "flowbite": "^3.1.2",
+    "flowbite-react": "^0.11.7",
+    "formik": "^2.4.6",
+    "next": "15.3.1",
+    "postcss": "^8.5.3",
+    "quill": "^2.0.3",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-editor-js": "^2.1.0",
+    "react-icons": "^5.5.0",
+    "react-quill": "^2.0.0",
+    "react-redux": "^9.2.0",
+    "recharts": "^2.15.3",
+    "tailwindcss": "^4.1.4",
+    "uuid": "^11.1.0",
+    "yup": "^1.6.1"
+  },
+  "devDependencies": {
+    "@types/draft-js": "^0.11.18",
+    "@types/node": "^20",
+    "@types/react": "^18",
+    "@types/react-dom": "^18",
+    "typescript": "^5"
+  }
+}

@@ -1,0 +1,131 @@
+.ck-content {
+    font-family: system-ui, sans-serif;
+    line-height: 1.6;
+    color: #1a202c;
+    font-size: 1rem;
+  }
+  
+  .ck-content h1,
+  .ck-content h2,
+  .ck-content h3,
+  .ck-content h4,
+  .ck-content h5,
+  .ck-content h6 {
+    font-weight: bold;
+    margin-top: 1.5em;
+    margin-bottom: 0.5em;
+    line-height: 1.25;
+  }
+  
+  .ck-content h1 {
+    font-size: 2rem;
+    color: #1a202c;
+  }
+  
+  .ck-content h2 {
+    font-size: 1.75rem;
+    color: #2d3748;
+  }
+  
+  .ck-content h3 {
+    font-size: 1.5rem;
+    color: #4a5568;
+  }
+  
+  .ck-content h4 {
+    font-size: 1.25rem;
+  }
+  
+  .ck-content h5 {
+    font-size: 1.1rem;
+  }
+  
+  .ck-content h6 {
+    font-size: 1rem;
+    font-weight: 600;
+  }
+  
+  .ck-content p {
+    margin-bottom: 1em;
+  }
+  
+  .ck-content ul,
+  .ck-content ol {
+    padding-left: 1.5em;
+    margin-bottom: 1em;
+  }
+  
+  .ck-content ul {
+    list-style-type: disc;
+  }
+  
+  .ck-content ol {
+    list-style-type: decimal;
+  }
+  
+  .ck-content li {
+    margin-bottom: 0.25em;
+  }
+  
+  .ck-content a {
+    color: #3182ce;
+    text-decoration: underline;
+  }
+  
+  .ck-content a:hover {
+    color: #2b6cb0;
+  }
+  
+  .ck-content blockquote {
+    margin: 1em 0;
+    padding-left: 1em;
+    border-left: 4px solid #cbd5e0;
+    color: #4a5568;
+    font-style: italic;
+    background-color: #f7fafc;
+  }
+  
+  .ck-content img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+    margin: 1em auto;
+  }
+  
+  .ck-content table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 1em 0;
+  }
+  
+  .ck-content th,
+  .ck-content td {
+    border: 1px solid #cbd5e0;
+    padding: 0.5em;
+    text-align: left;
+  }
+  
+  .ck-content thead {
+    background-color: #edf2f7;
+  }
+  
+  .ck-content pre {
+    background-color: #f7fafc;
+    padding: 1em;
+    overflow-x: auto;
+    border-radius: 4px;
+    font-family: monospace;
+    margin-bottom: 1em;
+  }
+  
+  .ck-content code {
+    background-color: #edf2f7;
+    padding: 0.2em 0.4em;
+    border-radius: 4px;
+    font-family: monospace;
+    font-size: 0.95em;
+  }
+  [data-placeholder]{
+    font-size: 13px !important;
+    font-weight: 400 !important;
+  }

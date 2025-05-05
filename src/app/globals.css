@@ -1,0 +1,55 @@
+@import "tailwindcss";
+
+/* radio box */
+.radio{
+  position: relative;
+}
+input[type="radio"]:checked + .radio{
+    border-color: #2c6ecb;
+}
+input[type="radio"]:checked + .radio::after{
+    content: " ";
+    height: 8px;
+    width: 8px;
+    background: #2c6ecb;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%,-50%);
+    border-radius: 50%;
+}
+/* modal */
+.modal-fade-in {
+    animation: fadeIn 200ms ease-out;
+  }
+  
+.modal-slide-Up {
+    animation: slideUp 200ms ease-out;
+  }
+  
+@keyframes fadeIn {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+  
+@keyframes slideUp {
+    from {
+      transform: translateY(20px);
+      opacity: 0;
+    }
+    to {
+      transform: translateY(0);
+      opacity: 1;
+    }
+  }
+.spin{
+    animation: spin 1s linear infinite;
+}
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
