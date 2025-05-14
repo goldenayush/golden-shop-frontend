@@ -1,5 +1,6 @@
 import React from "react";
-
+import { Label } from "./Label";
+import { TbSelector } from "react-icons/tb";
 type Options = React.DetailedHTMLProps<React.OptionHTMLAttributes<HTMLOptionElement>, HTMLOptionElement>;
 type FeatureProps = {
    label?: string;
@@ -11,31 +12,28 @@ type FeatureProps = {
 type Props = React.DetailedHTMLProps<React.SelectHTMLAttributes<HTMLSelectElement>, HTMLSelectElement> & FeatureProps;
 
 const SELECT_SIZE_TYPE = {
-   sm: "px-[12px] py-[2px] h-[25px] text-[12px]",
-   md: "px-[12px] py-[8px] h-[35px] text-[13px]",
-   lg: "px-[12px] py-[8px] h-[50px] text-[16px]",
+   sm: "px-[12px] py-[2px] h-[25px] text-[12px] rounded-sm",
+   md: "px-[12px] py-[8px] h-[35px] text-[13px] rounded-[4px]",
+   lg: "px-[12px] py-[8px] h-[50px] text-[16px] rounded-lg",
 };
 
 export function Select({ label, options, placeholder, eleSize, ...props }: Props) {
    return (
       <>
-         {label && (
-            <label //
-               htmlFor={props.id}
-               className="block mb-1 text-[#666] text-[14px]">
-               {label}
-            </label>
-         )}
-         <select {...props} className={`border-1 border-[#e5e7eb] rounded-[4px] w-full ${SELECT_SIZE_TYPE[eleSize || "md"]}`}>
-            {placeholder && (
-               <option value="" disabled>
-                  {placeholder}
-               </option>
-            )}
-            {options.map((option, idx) => (
-               <option key={`${props.name}-${idx}`} {...option} />
-            ))}
-         </select>
+         {label && <Label htmlFor={props.id}>{label}</Label>}
+         <div className="relative">
+            <select {...props} className={`border leading-none border-gray-300 text-gray-900 text-sm focus:ring-blue-500 focus:border-blue-500 block w-full ${SELECT_SIZE_TYPE[eleSize || "md"]}`}>
+               {placeholder && (
+                  <option value="" disabled selected>
+                     {placeholder}
+                  </option>
+               )}
+               {options.map((option, idx) => (
+                  <option key={`${props.name}-${idx}`} {...option} />
+               ))}
+            </select>
+            <TbSelector size={10} className="select-icon" />
+         </div>
       </>
    );
 }

@@ -7,7 +7,7 @@ export function Label({ className, ...props }: Props) {
          className={`${
             className //
                ? className
-               : "block mb-1 text-[#666] text-[14px]"
+               : "block mb-1 text-[#262626] text-[14px]"
          }`}
       />
    );

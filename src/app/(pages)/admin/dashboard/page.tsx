@@ -3,48 +3,12 @@ import { Card } from "@/shared/components";
 import Link from "next/link";
 import React from "react";
 import { XAxis, YAxis, Tooltip, ResponsiveContainer, AreaChart, Area, PieChart, Pie, Cell } from "recharts";
+import useDashboardController from "./dashboard.controller";
 
 const COLORS = ["#aee9d1", "#fed3d1", "#a4e8f2"];
 
-const chartData = [
-   { name: "Completed", value: 60 },
-   { name: "Cancelled", value: 20 },
-   { name: "Others", value: 10 },
-];
-const saleStatisticsData = [
-   {
-      total: 0,
-      count: "0",
-      time: "Dec 31",
-   },
-   {
-      total: 0,
-      count: "0",
-      time: "Jan 31",
-   },
-   {
-      total: "5095.0000",
-      count: "14",
-      time: "Feb 28",
-   },
-   {
-      total: "4115.0000",
-      count: "8",
-      time: "Mar 31",
-   },
-   {
-      total: 0,
-      count: "0",
-      time: "Apr 30",
-   },
-   {
-      total: 0,
-      count: "0",
-      time: "May 31",
-   },
-];
-
 export default function Dashboard() {
+   const ctrl = useDashboardController();
    return (
       <div className="p-4">
          <h2 className="text-[20px] font-semibold mb-3">Dashboard</h2>
@@ -63,7 +27,7 @@ export default function Dashboard() {
                   }>
                   <ResponsiveContainer width="100%" height={300}>
                      <AreaChart
-                        data={saleStatisticsData}
+                        data={ctrl.saleStatisticsData}
                         margin={{
                            top: 5,
                            right: 0,
@@ -127,8 +91,8 @@ export default function Dashboard() {
                   <div style={{ height: "200px" }}>
                      <ResponsiveContainer width="100%" height="100%">
                         <PieChart>
-                           <Pie data={chartData} labelLine={false} fill="#8884d8" dataKey="value" label>
-                              {chartData.map((entry, index) => (
+                           <Pie data={ctrl.lifetimeSalesData} labelLine={false} fill="#8884d8" dataKey="value" label>
+                              {ctrl.lifetimeSalesData.map((entry, index) => (
                                  <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                               ))}
                            </Pie>

@@ -1,15 +1,23 @@
 import React from "react";
 import { useState } from "react";
 
-export function useFileUpload() {
+type Props = {
+   multi?: boolean;
+};
+export function useFileUpload({ multi }: Props) {
    const [files, setFiles] = useState<File[]>([]);
    const [error, setError] = useState<string | null>(null);
 
    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
       if (e.target.files) {
          console.log(Array.from(e.target.files));
-         setFiles([...files, ...Array.from(e.target.files)]);
-         setError(null);
+         if (multi) {
+            setFiles([...files, ...Array.from(e.target.files)]);
+            setError(null);
+         } else {
+            setFiles(Array.from(e.target.files));
+            setError(null);
+         }
       }
    };
 

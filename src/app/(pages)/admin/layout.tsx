@@ -14,20 +14,21 @@ import { RiFile2Fill } from "react-icons/ri";
 import { IoSettingsSharp } from "react-icons/io5";
 import Navbar from "./components/Navbar";
 import { usePathname } from "next/navigation";
+import { useIsClient } from "@/shared/hooks";
 
 const navitems = [
    {
       groupName: "Quick links",
       list: [
          { title: "Dashboard", path: "/admin/dashboard", icon: AiFillDashboard },
-         { title: "New Product", path: "/admin/new-product", icon: FaBucket },
+         { title: "New Product", path: "/admin/products/create-product", icon: FaBucket },
          { title: "New Coupon", path: "/admin/new-coupon", icon: RiCoupon3Fill },
       ],
    },
    {
       groupName: "Catalog",
       list: [
-         { title: "Product", path: "/admin/products", icon: AiFillDashboard },
+         { title: "Products", path: "/admin/products", icon: AiFillDashboard },
          { title: "categories", path: "/admin/categories", icon: FaLink },
          { title: "collections", path: "/admin/collections", icon: FaTag },
          { title: "attributes", path: "/admin/attributes", icon: FaHashtag },
@@ -52,6 +53,13 @@ const navitems = [
 
 type Props = Readonly<{ children: React.ReactNode }>;
 export default function AdminLayout({ children }: Props) {
+   const isClient = useIsClient();
+   const pathname = usePathname();
+   if (!isClient) return null;
+
+   if (pathname.includes("/auth")) {
+      return children;
+   }
    return (
       <main className="flex h-screen">
          <Navbar />

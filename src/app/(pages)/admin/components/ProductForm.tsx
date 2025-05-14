@@ -1,24 +1,30 @@
 "use client";
-import { Card, Editor, Modal } from "@/shared/components";
+import { Card, Editor } from "@/shared/components";
 import { Button, Label, Radio, Select, Textarea, TextField } from "@/shared/ui";
 import React, { JSX, useRef, useState } from "react";
 import { FaCamera } from "react-icons/fa6";
 import { RiDeleteBin6Line } from "react-icons/ri";
-import { MdArrowForwardIos, MdArrowBackIosNew } from "react-icons/md";
-import { Field, Form, Formik } from "formik";
+import { ErrorMessage, Field, Form, Formik } from "formik";
 import { useFileUpload } from "@/shared/hooks";
+import SelectKeyAttributes from "./SelectKeyAttributes";
+import { IoArrowBack } from "react-icons/io5";
+import * as Yup from "yup";
 
 type Props = {
-   heading: string;
+   pid?: string;
 };
-export default function ProductForm({ heading }: Props) {
-   const { files, handleFileChange, deleteFile } = useFileUpload();
+export default function ProductForm({ pid }: Props) {
+   const { files, handleFileChange, deleteFile } = useFileUpload({ multi: true });
    const fields = {
       name: "samsung s24",
       sku: 500,
       price: 80000,
       weight: 20,
-      category: "Laddu Gopal > Pagdi",
+      category: {
+         name: "",
+         id: "",
+         value: "",
+      },
       tax_class: "Zero",
       description: "<h1>Product Description</h1>",
       media: [
@@ -43,20 +49,28 @@ export default function ProductForm({ heading }: Props) {
       },
    };
    const [initialValues, setInitialValues] = useState(fields);
-   const categories = [
-      { name: "Laddu Gopal > Accessories" }, //
-      { name: "Laddu Gopal > Pagdi" },
-      { name: "Laddu Gopal > Poshak" },
-      { name: "Laddu Gopal" },
-   ];
-   const modalRef = useRef<any>(null);
-
    return (
-      <Formik enableReinitialize initialValues={initialValues} onSubmit={(props) => console.log(props)}>
+      <Formik //
+         enableReinitialize
+         initialValues={initialValues}
+         validationSchema={validationSchema}
+         onSubmit={(props) => console.log(props)}>
          {(formik) => {
             return (
                <Form>
-                  <h2 className="text-[20px] font-semibold mb-3">{heading}</h2>
+                  <div className="flex items-center gap-3 mb-3">
+                     <button
+                        type="button"
+                        className="border p-2 rounded-sm cursor-pointer border-[#8c9196]
+                              text-[#6c7277]">
+                        <IoArrowBack size={22} />
+                     </button>
+                     <h2 className="text-[20px] font-semibold">
+                        {/*  */}
+                        {pid ? "Editing [Laddu Gopal Jewelry Set]" : "Create a new product"}
+                        {/*  */}
+                     </h2>
+                  </div>
                   <div className="grid grid-cols-12 gap-3">
                      <div className="col-span-8">
                         {/* General */}
@@ -71,6 +85,11 @@ export default function ProductForm({ heading }: Props) {
                                     name="name"
                                     placeholder="Name"
                                  />
+                                 <ErrorMessage //
+                                    component="small"
+                                    className="field-error"
+                                    name="name"
+                                 />
                               </div>
                               {/* SKU */}
                               <div className="col-span-4">
@@ -81,6 +100,11 @@ export default function ProductForm({ heading }: Props) {
                                     id="SKU"
                                     name="sku"
                                     placeholder="SKU"
+                                 />
+                                 <ErrorMessage //
+                                    component="small"
+                                    className="field-error"
+                                    name="sku"
                                  />
                               </div>
                               {/* price */}
@@ -93,6 +117,11 @@ export default function ProductForm({ heading }: Props) {
                                     name="price"
                                     placeholder="Price"
                                  />
+                                 <ErrorMessage //
+                                    component="small"
+                                    className="field-error"
+                                    name="price"
+                                 />
                               </div>
                               {/* Weight */}
                               <div className="col-span-4">
@@ -104,21 +133,38 @@ export default function ProductForm({ heading }: Props) {
                                     name="weight"
                                     placeholder="Weight"
                                  />
+                                 <ErrorMessage //
+                                    component="small"
+                                    className="field-error"
+                                    name="weight"
+                                 />
                               </div>
                               {/* Category */}
                               <div className="col-span-12">
                                  <Label>Category</Label>
-                                 {formik.values.category ? ( //
+                                 {formik.values.category?.name ? ( //
                                     <div className="flex justify-between items-center border p-3 rounded-sm border-[#e5e7eb]">
-                                       <span className="text-sm text-gray-500">{formik.values.category}</span>
-                                       <button //
-                                          type="button"
-                                          className="text-xs text-blue-400 font-semibold cursor-pointer"
-                                          onClick={() => {
-                                             modalRef.current.setIsOpen(true);
-                                          }}>
-                                          Change
-                                       </button>
+                                       <span className="text-sm text-gray-500">{formik?.values?.category?.name}</span>
+                                       <SelectKeyAttributes
+                                          title="Change"
+                                          onlyTitle
+                                          selcted={[formik?.values?.category as any]}
+                                          keyName="categories"
+                                          setValue={(values) => {
+                                             formik.setFieldValue(
+                                                "category.id", //
+                                                values[0]?.id
+                                             );
+                                             formik.setFieldValue(
+                                                "category.name", //
+                                                values[0]?.name
+                                             );
+                                             formik.setFieldValue(
+                                                "category.label", //
+                                                values[0]?.value
+                                             );
+                                          }}
+                                       />
                                        <button //
                                           type="button"
                                           className="text-xs text-red-400 font-semibold cursor-pointer"
@@ -129,62 +175,27 @@ export default function ProductForm({ heading }: Props) {
                                        </button>
                                     </div>
                                  ) : (
-                                    <button //
-                                       type="button"
-                                       onClick={() => modalRef.current.setIsOpen(true)}
-                                       className="text-blue-500 cursor-pointer">
-                                       Select category
-                                    </button>
+                                    <SelectKeyAttributes //
+                                       title="Select Categories"
+                                       onlyTitle
+                                       selcted={[formik?.values?.category]}
+                                       keyName="categories"
+                                       setValue={(values) => {
+                                          formik.setFieldValue(
+                                             "category.id", //
+                                             values[0]?.id
+                                          );
+                                          formik.setFieldValue(
+                                             "category.name", //
+                                             values[0]?.name
+                                          );
+                                          formik.setFieldValue(
+                                             "category.label", //
+                                             values[0]?.value
+                                          );
+                                       }}
+                                    />
                                  )}
-                                 <Modal ref={modalRef} title="Select Categories" size="lg" className="p-5">
-                                    <div>
-                                       <input type="text" className="border w-full border-gray-400 p-2 rounded-sm placeholder:text-[14px]" placeholder="Search Categories" />
-                                    </div>
-                                    <div className="mt-3">
-                                       {categories?.map((category, idx) => (
-                                          <React.Fragment //
-                                             key={`product-category-${idx}`}>
-                                             <div //
-                                                className="flex justify-between items-center py-3">
-                                                <span className="text-sm text-gray-500">{category.name}</span>
-                                                <button //
-                                                   role="button"
-                                                   className="py-2 px-4 border-gray-600 border rounded-sm text-sm cursor-pointer font-semibold"
-                                                   onClick={() => {
-                                                      formik.setFieldValue("category", category.name);
-                                                      modalRef.current.setIsOpen(false);
-                                                   }}>
-                                                   Select
-                                                </button>
-                                             </div>
-                                             {Boolean(categories.length - 1 > idx) && (
-                                                <hr //
-                                                   className="border-b border-[#e1e3e5]"
-                                                />
-                                             )}
-                                          </React.Fragment>
-                                       ))}
-                                    </div>
-                                    <div className="mt-4 flex items-center justify-between ">
-                                       <div className="flex items-center gap-2">
-                                          <span className="text-[14px] text-gray-500">4 of 4</span>
-                                          <button type="button" className="border border-gray-500 text-gray-500 p-1 cursor-pointer">
-                                             <MdArrowBackIosNew size={12} />
-                                          </button>
-                                          <button type="button" className="border border-gray-500 text-gray-500 p-1 cursor-pointer">
-                                             <MdArrowForwardIos size={12} />
-                                          </button>
-                                       </div>
-                                       <button //
-                                          type="button"
-                                          className="py-2 px-4 border-gray-600 border rounded-sm text-sm cursor-pointer font-semibold"
-                                          onClick={() => {
-                                             modalRef.current.setIsOpen(false);
-                                          }}>
-                                          Close
-                                       </button>
-                                    </div>
-                                 </Modal>
                               </div>
                               {/* tax_class */}
                               <div className="col-span-12">
@@ -255,6 +266,11 @@ export default function ProductForm({ heading }: Props) {
                                  id="url_key"
                                  name="url_key"
                               />
+                              <ErrorMessage //
+                                 component="small"
+                                 className="field-error"
+                                 name="url_key"
+                              />
                            </div>
                            {/* Meta title */}
                            <div className="mb-3">
@@ -284,7 +300,6 @@ export default function ProductForm({ heading }: Props) {
                                  className="h-[100px]"
                               />
                            </div>
-                           <div></div>
                         </Card>
                      </div>
                      <div className="col-span-4">
@@ -376,6 +391,11 @@ export default function ProductForm({ heading }: Props) {
                               name="quantity"
                               placeholder="Quantity"
                            />
+                           <ErrorMessage //
+                              component="small"
+                              className="field-error"
+                              name="quantity"
+                           />
                         </Card>
                         {/* Attribute group */}
                         <Card className="p-4 mt-3" heading="Attribute group">
@@ -395,57 +415,85 @@ export default function ProductForm({ heading }: Props) {
                                  <ItemGrid
                                     title="Size"
                                     item={
-                                       <Field //
-                                          as={Select}
-                                          name="attributes.ocassion"
-                                          placeholder="Please Select"
-                                          options={[
-                                             { value: "diwali", label: "diwali" },
-                                             { value: "holi", label: "holi" },
-                                          ]}
-                                       />
+                                       <>
+                                          <Field //
+                                             as={Select}
+                                             name="attributes.ocassion"
+                                             placeholder="Please Select"
+                                             options={[
+                                                { value: "diwali", label: "diwali" },
+                                                { value: "holi", label: "holi" },
+                                             ]}
+                                          />
+                                          <ErrorMessage //
+                                             component="small"
+                                             className="field-error"
+                                             name="attributes.ocassion"
+                                          />
+                                       </>
                                     }
                                  />
                                  <ItemGrid
                                     title="Ocassion"
                                     item={
-                                       <Field //
-                                          as={Select}
-                                          name="attributes.size"
-                                          placeholder="Please Select"
-                                          options={[
-                                             { value: "1", label: "1" },
-                                             { value: "2", label: "2" },
-                                          ]}
-                                       />
+                                       <>
+                                          <Field //
+                                             as={Select}
+                                             name="attributes.size"
+                                             placeholder="Please Select"
+                                             options={[
+                                                { value: "1", label: "1" },
+                                                { value: "2", label: "2" },
+                                             ]}
+                                          />
+                                          <ErrorMessage //
+                                             component="small"
+                                             className="field-error"
+                                             name="attributes.size"
+                                          />
+                                       </>
                                     }
                                  />
                                  <ItemGrid
                                     title="Material"
                                     item={
-                                       <Field //
-                                          as={Select}
-                                          name="attributes.material"
-                                          placeholder="Please Select"
-                                          options={[
-                                             { value: "cotton", label: "cotton" },
-                                             { value: "net", label: "net" },
-                                          ]}
-                                       />
+                                       <>
+                                          <Field //
+                                             as={Select}
+                                             name="attributes.material"
+                                             placeholder="Please Select"
+                                             options={[
+                                                { value: "cotton", label: "cotton" },
+                                                { value: "net", label: "net" },
+                                             ]}
+                                          />
+                                          <ErrorMessage //
+                                             component="small"
+                                             className="field-error"
+                                             name="attributes.material"
+                                          />
+                                       </>
                                     }
                                  />
                                  <ItemGrid
                                     title="Color"
                                     item={
-                                       <Field //
-                                          as={Select}
-                                          name="attributes.color"
-                                          placeholder="Please Select"
-                                          options={[
-                                             { value: "red", label: "red" },
-                                             { value: "black", label: "black" },
-                                          ]}
-                                       />
+                                       <>
+                                          <Field //
+                                             as={Select}
+                                             name="attributes.color"
+                                             placeholder="Please Select"
+                                             options={[
+                                                { value: "red", label: "red" },
+                                                { value: "black", label: "black" },
+                                             ]}
+                                          />
+                                          <ErrorMessage //
+                                             component="small"
+                                             className="field-error"
+                                             name="attributes.color"
+                                          />
+                                       </>
                                     }
                                  />
                               </div>
@@ -485,3 +533,23 @@ const ItemGrid = ({ title, item }: { title: string; item: JSX.Element | string }
       </div>
    );
 };
+
+const validationSchema = Yup.object().shape({
+   name: Yup.string().required("Product name is required"),
+   sku: Yup.number().required("SKU is required"),
+   price: Yup.number().required("Price is required"),
+   weight: Yup.number().required("Weight is required"),
+   url_key: Yup.string().required("URL key is required"),
+   status: Yup.string().required("status is required"),
+   visibility: Yup.string().oneOf(["visible", "hidden", "catalog", "search"], "Invalid visibility"),
+   quantity: Yup.number().min(0, "Quantity cannot be negative").required(),
+
+   attribute_group: Yup.string(),
+
+   attributes: Yup.object().shape({
+      color: Yup.string().required("Color is required"),
+      material: Yup.string().required("Material is required"),
+      ocassion: Yup.string().required("Occasion is required"),
+      size: Yup.string().required("Size is required"),
+   }),
+});

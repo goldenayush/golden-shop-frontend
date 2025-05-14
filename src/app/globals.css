@@ -18,6 +18,25 @@ input[type="radio"]:checked + .radio::after{
     transform: translate(-50%,-50%);
     border-radius: 50%;
 }
+/* select */
+select {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+}
+
+/* Remove IE arrow */
+select::-ms-expand {
+  display: none;
+}
+
+.select-icon {
+  position: absolute;
+  top: 50%;
+  right: 10px;
+  transform: translateY(-50%);
+  pointer-events: none; 
+}
 /* modal */
 .modal-fade-in {
     animation: fadeIn 200ms ease-out;
@@ -52,4 +71,8 @@ input[type="radio"]:checked + .radio::after{
 @keyframes spin {
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }
+}
+.field-error{
+  font-size: 12px;
+  color: red;
 }

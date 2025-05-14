@@ -22,7 +22,7 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: Props) {
    return (
       <html lang="en">
-         <body className={`${geistSans.variable} ${geistMono.variable}`}>
+         <body className={`${geistSans.variable} ${geistMono.variable}`} suppressHydrationWarning={true}>
             <StoreProvider>{children}</StoreProvider>
          </body>
       </html>
