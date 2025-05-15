@@ -1,5 +1,6 @@
 import { useRouter, useSearchParams } from "next/navigation";
 import { useDebounce } from "@/shared/hooks";
+import { useState } from "react";
 const products = [
    {
       id: 1,
@@ -57,6 +58,7 @@ const products = [
    },
 ];
 export default function useProductsController() {
+   const [queryStr, setQueryStr] = useState("");
    /* variables here */
    const { searchKey, onSearchChange } = useDebounce({
       time: 1500,
@@ -69,7 +71,7 @@ export default function useProductsController() {
    const setParam = (key: string, value: string) => {
       const params = new URLSearchParams(searchParams.toString());
       params.set(key, value);
-      router.push(`?${params.toString()}`);
+      router.push(`?${queryStr + params.toString()}`);
    };
 
    const queryString = (value: string) => {

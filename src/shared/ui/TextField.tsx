@@ -2,7 +2,12 @@
 import React from "react";
 import { Label } from "./Label";
 
-type FeatureProps = { label?: string; eleSize?: "sm" | "md" | "lg" };
+type FeatureProps = {
+   label?: string;
+   eleSize?: "sm" | "md" | "lg";
+   prefixIcon?: any;
+   suffixIcon?: any;
+};
 export type TextFieldProps = React.DetailedHTMLProps<React.InputHTMLAttributes<HTMLInputElement>, HTMLInputElement> & FeatureProps;
 
 const TEXT_FIELD_SIZE_TYPE = {
@@ -11,7 +16,24 @@ const TEXT_FIELD_SIZE_TYPE = {
    lg: "px-[12px] py-[8px] h-[50px] text-[16px] rounded-lg",
 };
 
-export function TextField({ label, className, eleSize, ...props }: TextFieldProps) {
+export function TextField({ label, className, eleSize, prefixIcon, suffixIcon, ...props }: TextFieldProps) {
+   if (suffixIcon || prefixIcon) {
+      return (
+         <>
+            {label && <Label htmlFor={props.id}>{label}</Label>}
+            <div className="border flex items-center rounded-[4px] border-gray-300  focus-within:outline-2 focus-within:outline-blue-500">
+               {prefixIcon && <span className="px-2">{prefixIcon}</span>}
+               <input
+                  {...props}
+                  className={`leading-none border-none text-gray-900 text-sm focus:ring-0 focus:outline-none block w-full placeholder:text-[14px] ${TEXT_FIELD_SIZE_TYPE[eleSize || "md"]} ${
+                     className || ""
+                  }`}
+               />
+               {suffixIcon && <span className="px-2">{suffixIcon}</span>}
+            </div>
+         </>
+      );
+   }
    return (
       <>
          {label && <Label htmlFor={props.id}>{label}</Label>}

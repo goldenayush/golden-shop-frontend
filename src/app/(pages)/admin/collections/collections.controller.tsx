@@ -1,5 +1,3 @@
-import React from "react";
-
 const collections = [
    { id: "1", collection_name: "Accessories", code: "accessories-products" }, //
    { id: "2", collection_name: "Best Sellers", code: "bestsellers" },

@@ -116,6 +116,7 @@ export default function ProductForm({ pid }: Props) {
                                     id="price"
                                     name="price"
                                     placeholder="Price"
+                                    suffixIcon="INR"
                                  />
                                  <ErrorMessage //
                                     component="small"
@@ -132,6 +133,7 @@ export default function ProductForm({ pid }: Props) {
                                     id="weight"
                                     name="weight"
                                     placeholder="Weight"
+                                    suffixIcon="kg"
                                  />
                                  <ErrorMessage //
                                     component="small"

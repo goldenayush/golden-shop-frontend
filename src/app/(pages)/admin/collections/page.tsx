@@ -7,15 +7,27 @@ import useCollectionsController from "./collections.controller";
 export default function CollectionsPage() {
    const ctrl = useCollectionsController();
    return (
-      <div className="py-7  w-full md:w-[70%] mx-auto">
+      <div className="py-7 w-full md:w-[70%] mx-auto">
          <div className="flex items-center justify-between mb-4">
             <h3 className="text-[20px] font-semibold">Collections</h3>
-            <Link href={"/admin/categories/create-product"} type="button" className="bg-[#008060] text-white py-2 px-4 rounded-sm text-[14px] font-semibold cursor-pointer">
+            <Link href={"/admin/collections/create-collection"} type="button" className="bg-[#008060] text-white py-2 px-4 rounded-sm text-[14px] font-semibold cursor-pointer">
                New Collection
             </Link>
          </div>
          <div>
             <Card className="bg-white">
+               <div className="flex items-center justify-between p-4">
+                  <input //
+                     type="text"
+                     className="border border-gray-300 rounded-sm text-[12px] px-3 py-1 placeholder:text-[12px] placeholder:font-semibold"
+                     placeholder="Search"
+                  />
+                  <div>
+                     <Link href="/admin/collections" className="text-[14px] text-blue-500 hover:underline" replace>
+                        Clear Filter
+                     </Link>
+                  </div>
+               </div>
                <Table
                   checkable
                   checkEventList={[
