@@ -41,6 +41,7 @@ export function Dropdown({ options, Component, OptionComponent, onChange, defaul
                {options.map((option) => (
                   <button
                      type="button"
+                     className="block"
                      onClick={() => {
                         setValue((prev) => {
                            const selectValue = option.value;

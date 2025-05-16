@@ -2,7 +2,7 @@ import { Checkbox, DatePicker, Switch, Textarea, TextField } from "@/shared/ui";
 import { ErrorMessage, Field, FormikProps } from "formik";
 import React from "react";
 import * as Yup from "yup";
-import { ICouponfields } from "../new-coupon.controller";
+import { ICouponfields } from "../CouponForm";
 
 type Props = {
    formik: FormikProps<ICouponfields>;

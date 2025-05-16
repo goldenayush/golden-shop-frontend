@@ -9,3 +9,4 @@ export { Switch } from "./Switch";
 export { DatePicker } from "./date-picker";
 export { Checkbox } from "./Checkbox";
 export { Dropdown } from "./Dropdown";
+export { Badge } from "./Badge";

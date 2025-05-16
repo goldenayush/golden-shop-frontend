@@ -1,11 +1,12 @@
 import { Radio, Select, TextField } from "@/shared/ui";
 import { ErrorMessage, Field, FieldArray, FormikProps } from "formik";
 import React, { useEffect } from "react";
-import SelectKeyAttributes from "../../components/SelectKeyAttributes";
 import * as Yup from "yup";
-import { ICouponfields } from "../new-coupon.controller";
+
 import { FaMinus } from "react-icons/fa";
 import { MdAdd } from "react-icons/md";
+import { ICouponfields } from "../CouponForm";
+import SelectKeyAttributes from "../../../components/SelectKeyAttributes";
 
 type Props = {
    formik: FormikProps<ICouponfields>;

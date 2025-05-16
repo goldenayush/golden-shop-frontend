@@ -2,7 +2,7 @@ import { Select, TextField } from "@/shared/ui";
 import { ErrorMessage, Field, FormikProps } from "formik";
 import * as Yup from "yup";
 import React from "react";
-import { ICouponfields } from "../new-coupon.controller";
+import { ICouponfields } from "../CouponForm";
 
 type Props = {
    formik: FormikProps<ICouponfields>;

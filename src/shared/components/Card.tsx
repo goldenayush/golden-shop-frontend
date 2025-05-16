@@ -1,7 +1,7 @@
 import React from "react";
 
 type FeatureProps = {
-   heading?: string;
+   heading?: string | JSX.Element;
    more?: any;
 };
 

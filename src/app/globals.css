@@ -37,6 +37,8 @@ select::-ms-expand {
   transform: translateY(-50%);
   pointer-events: none; 
 }
+
+/*  */
 /* modal */
 .modal-fade-in {
     animation: fadeIn 200ms ease-out;

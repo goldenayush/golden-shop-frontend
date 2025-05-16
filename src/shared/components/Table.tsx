@@ -59,9 +59,9 @@ export function Table({ dataList = [], colums, checkable, onSort, onPagination, 
                   </th>
                )}
                {colums?.map((colum) => (
-                  <th key={colum.key} scope="col" className="px-6 py-4 border-b border-gray-200">
+                  <th key={colum.key} scope="col" className="px-4 py-4 border-b border-gray-200">
                      <div className="flex items-center gap-2">
-                        {colum?.label}
+                        <span className="text-[12px] font-semibold">{colum?.label}</span>
                         {colum.sort && (
                            <span>
                               <IoIosArrowUp

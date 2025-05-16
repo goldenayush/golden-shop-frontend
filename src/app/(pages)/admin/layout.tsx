@@ -3,7 +3,7 @@ import { AiFillDashboard } from "react-icons/ai";
 import { FaBucket } from "react-icons/fa6";
 import { RiCoupon3Fill } from "react-icons/ri";
 import { FaTag } from "react-icons/fa6";
-import { FaLink } from "react-icons/fa";
+import { FaLink, FaUserFriends } from "react-icons/fa";
 import { FaHashtag } from "react-icons/fa";
 import Link from "next/link";
 import React, { JSX } from "react";
@@ -22,7 +22,7 @@ const navitems = [
       list: [
          { title: "Dashboard", path: "/admin/dashboard", icon: AiFillDashboard },
          { title: "New Product", path: "/admin/products/create-product", icon: FaBucket },
-         { title: "New Coupon", path: "/admin/new-coupon", icon: RiCoupon3Fill },
+         { title: "New Coupon", path: "/admin/coupons/create-coupon", icon: RiCoupon3Fill },
       ],
    },
    {
@@ -36,16 +36,26 @@ const navitems = [
    },
    {
       groupName: "Sale",
-      list: [{ title: "orders", path: "/admin/orders", icon: BsBoxFill }],
+      list: [
+         { title: "orders", path: "/admin/orders", icon: BsBoxFill }, //
+      ],
+   },
+   {
+      groupName: "Customer",
+      list: [
+         { title: "Customers", path: "/admin/customers", icon: FaUserFriends }, //
+      ],
    },
    {
       groupName: "Promotion",
-      list: [{ title: "Coupous", path: "/admin/coupous", icon: FaGift }],
+      list: [
+         { title: "coupons", path: "/admin/coupons", icon: FaGift }, //
+      ],
    },
    {
       groupName: "cms",
       list: [
-         { title: "pages", path: "/admin/pages", icon: RiFile2Fill },
+         { title: "pages", path: "/admin/cms-pages", icon: RiFile2Fill },
          { title: "widgets", path: "/admin/widgets", icon: IoExtensionPuzzle },
       ],
    },
