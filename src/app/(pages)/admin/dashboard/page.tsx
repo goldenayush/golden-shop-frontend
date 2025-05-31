@@ -1,5 +1,5 @@
 "use client";
-import { Card } from "@/shared/components";
+import { Card, PageHeader } from "@/shared/components";
 import Link from "next/link";
 import React from "react";
 import { XAxis, YAxis, Tooltip, ResponsiveContainer, AreaChart, Area, PieChart, Pie, Cell } from "recharts";
@@ -10,10 +10,10 @@ const COLORS = ["#aee9d1", "#fed3d1", "#a4e8f2"];
 export default function Dashboard() {
    const ctrl = useDashboardController();
    return (
-      <div className="p-4">
-         <h2 className="text-[20px] font-semibold mb-3">Dashboard</h2>
+      <div className="p-7">
+         <PageHeader heading="Dashboard" />
          <div className="grid grid-cols-12 gap-3">
-            <div className="col-span-8">
+            <div className="col-span-12 lg:col-span-8">
                {/* Sale Statistics */}
                <Card
                   className="p-4 mb-3"
@@ -68,7 +68,7 @@ export default function Dashboard() {
                </Card>
             </div>
             {/* Best Sellers */}
-            <div className="col-span-4">
+            <div className="col-span-12 lg:col-span-4">
                <Card heading="Lifetime Sales" className="p-4">
                   <div className="grid grid-cols-1 gap-2">
                      <div className="flex space-x-3 items-center">

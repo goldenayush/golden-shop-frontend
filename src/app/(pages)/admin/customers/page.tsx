@@ -1,5 +1,5 @@
 "use client";
-import { Card, Table } from "@/shared/components";
+import { Card, PageHeader, Table } from "@/shared/components";
 import { Dropdown } from "@/shared/ui";
 import Link from "next/link";
 import React from "react";
@@ -11,9 +11,7 @@ export default function CustomersPage() {
    const ctrl = useCustomersController();
    return (
       <div className="p-7">
-         <div className="flex items-center justify-between mb-4">
-            <h3 className="text-[20px] font-semibold">Customers</h3>
-         </div>
+         <PageHeader heading="Customers" />
          <div>
             <Card className="bg-white">
                {/*--------------filter--------------------*/}

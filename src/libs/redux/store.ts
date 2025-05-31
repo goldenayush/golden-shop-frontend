@@ -1,8 +1,13 @@
+import rootReducer from "@/services";
 import { configureStore } from "@reduxjs/toolkit";
+import reduxMiddleware from "./middlewares/middleware.redux";
 
 export const makeStore = () => {
    return configureStore({
-      reducer: {},
+      reducer: rootReducer,
+      middleware(getDefaultMiddleware) {
+         return getDefaultMiddleware().concat(reduxMiddleware);
+      },
    });
 };
 

@@ -1,13 +1,12 @@
 "use client";
 import { Form, Formik } from "formik";
 import React, { useState } from "react";
-import { IoArrowBack } from "react-icons/io5";
 import GeneralFormSection, { generalFormSchemas } from "./form-parts/GeneralForm";
 import DiscountType, { discountTypeSchemas } from "./form-parts/DiscountTypeForm";
 import OrderConditions, { orderConditionsSchemas } from "./form-parts/OrderForm";
 import CustomerForm, { customerSchemas } from "./form-parts/CustomerForm";
 import * as Yup from "yup";
-import { Card } from "@/shared/components";
+import { Card, PageHeader } from "@/shared/components";
 import { Button } from "@/shared/ui";
 
 const couponfields = {
@@ -45,15 +44,7 @@ export default function CouponForm() {
    };
    return (
       <div className="p-7">
-         <div className="flex items-center gap-3 mb-3">
-            <button
-               type="button"
-               className="border p-2 rounded-sm cursor-pointer border-[#8c9196]
-                text-[#6c7277]">
-               <IoArrowBack size={22} />
-            </button>
-            <h2 className="text-[20px] font-semibold">Create a new coupon</h2>
-         </div>
+         <PageHeader backLink="/admin/coupons" heading="Create a new coupon" />
          <Formik
             initialValues={initialValues}
             onSubmit={onSubmit}
@@ -72,10 +63,10 @@ export default function CouponForm() {
                      <DiscountType formik={formik} />
                   </Card>
                   <div className="grid grid-cols-12 gap-3 mt-3">
-                     <Card className="col-span-8 p-5 mt-3" heading="Order conditions">
+                     <Card className="col-span-12 lg:col-span-8 p-5 mt-3" heading="Order conditions">
                         <OrderConditions formik={formik} />
                      </Card>
-                     <Card className="col-span-4 p-5 mt-3" heading="Customer conditions">
+                     <Card className="col-span-12 lg:col-span-4 p-5 mt-3" heading="Customer conditions">
                         <CustomerForm formik={formik} />
                      </Card>
                   </div>

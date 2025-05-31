@@ -12,11 +12,9 @@ export function useDebounce(props: Props) {
    };
 
    useEffect(() => {
-      const handler =
-         searchKey &&
-         setTimeout(() => {
-            props.callback(searchKey);
-         }, props.time);
+      const handler = setTimeout(() => {
+         props.callback(searchKey);
+      }, props.time);
 
       return () => {
          clearTimeout(handler);

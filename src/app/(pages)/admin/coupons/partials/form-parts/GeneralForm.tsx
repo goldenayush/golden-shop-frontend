@@ -39,7 +39,7 @@ export default function GeneralFormSection({ formik }: Props) {
                checked={formik?.values?.general?.status}
             />
          </div>
-         <div className="col-span-4">
+         <div className="col-span-12 md:col-span-4">
             <Field //
                as={TextField}
                label="Discount amount"
@@ -48,7 +48,7 @@ export default function GeneralFormSection({ formik }: Props) {
             />
             <ErrorMessage component="small" className="field-error" name="general.discount_amount" />
          </div>
-         <div className="col-span-4">
+         <div className="col-span-12 md:col-span-4">
             <Field //
                as={DatePicker}
                label="Start date"
@@ -56,7 +56,7 @@ export default function GeneralFormSection({ formik }: Props) {
             />
             <ErrorMessage component="small" className="field-error" name="general.start_date" />
          </div>
-         <div className="col-span-4">
+         <div className="col-span-12 md:col-span-4">
             <Field //
                as={DatePicker}
                label="End date"

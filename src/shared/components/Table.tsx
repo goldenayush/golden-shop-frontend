@@ -1,12 +1,14 @@
 "use client";
 import React, { useState } from "react";
 import { IoIosArrowUp } from "react-icons/io";
-import { Checkbox, Select, TextField } from "../ui";
+import { Button, Checkbox, Select, TextField } from "../ui";
 import { useSearchParams, useRouter } from "next/navigation";
 import { HiOutlineChevronDoubleLeft } from "react-icons/hi";
 import { IoChevronBackSharp } from "react-icons/io5";
+
 type Props = {
-   onSort?: (param: string) => void;
+   loading?: boolean;
+   onSort?: (param: any) => void;
    checkable?: boolean;
    dataList: any[];
    colums?: {
@@ -15,13 +17,21 @@ type Props = {
       sort?: boolean;
    }[];
    onPagination?: (params: any) => void;
+   pagination?: {
+      currentPage: number;
+      totalPages: number;
+      totalRecords: number;
+      limit: number;
+      onPagination(param: any): void;
+   };
    checkEventList?: {
+      loading?: boolean;
       label: string;
       event(param: string[]): void;
    }[];
 };
 
-export function Table({ dataList = [], colums, checkable, onSort, onPagination, checkEventList }: Props) {
+function List({ dataList, colums, checkable, onSort, onPagination, pagination, checkEventList }: Props) {
    const router = useRouter();
    const searchParams = useSearchParams();
    const page = Number(searchParams.get("page")) || 0;
@@ -31,7 +41,6 @@ export function Table({ dataList = [], colums, checkable, onSort, onPagination, 
          checked: false,
       }))
    );
-
    const checkedProducts = products?.filter((item) => item?.checked) || [];
 
    const setParam = (key: string, value: string) => {
@@ -39,7 +48,6 @@ export function Table({ dataList = [], colums, checkable, onSort, onPagination, 
       params.set(key, value);
       router.push(`?${params.toString()}`);
    };
-
    return (
       <div className="relative overflow-x-auto">
          <table className="w-full text-sm text-left rtl:text-right">
@@ -66,16 +74,16 @@ export function Table({ dataList = [], colums, checkable, onSort, onPagination, 
                            <span>
                               <IoIosArrowUp
                                  className="cursor-pointer"
-                                 size={10}
+                                 size={8}
                                  onClick={() => {
-                                    onSort && onSort(`od=${colum.key}&od=asc`);
+                                    onSort && onSort({ sortBy: colum.key, sortOrder: "asc" });
                                  }}
                               />
                               <IoIosArrowUp
                                  className="cursor-pointer rotate-[180deg]"
-                                 size={10}
+                                 size={8}
                                  onClick={() => {
-                                    onSort && onSort(`od=${colum.key}&od=desc`);
+                                    onSort && onSort({ sortBy: colum.key, sortOrder: "desc" });
                                  }}
                               />
                            </span>
@@ -88,26 +96,28 @@ export function Table({ dataList = [], colums, checkable, onSort, onPagination, 
                {checkable && products?.some((ele) => ele?.checked) && (
                   <tr className="border-b border-gray-200">
                      <th colSpan={7} scope="col" className="px-6 py-4 border-b border-gray-200">
-                        <div className="border-l-0 border inline-block border-gray-200">
+                        <div className="border-l-0 border inline-flex border-gray-200">
                            <button type="button" className="border-gray-200 py-2 px-4 border-l font-semibold text-[14px] cursor-pointer">
                               {checkedProducts?.length} selected
                            </button>
                            {Boolean(checkEventList?.length) &&
-                              checkEventList?.map((evt) => (
-                                 <button //
+                              checkEventList?.map((evt, idx) => (
+                                 <Button //
+                                    key={`event-${idx}`}
                                     type="button"
                                     className="border-gray-200 py-2 px-4 border-l font-semibold text-[14px] cursor-pointer"
-                                    onClick={() => evt?.event(checkedProducts.map((data) => data?.id))}>
+                                    onClick={() => evt?.event(checkedProducts.map((data) => data?.id))}
+                                    loading={evt?.loading}>
                                     {evt.label}
-                                 </button>
+                                 </Button>
                               ))}
                         </div>
                      </th>
                   </tr>
                )}
-               {products?.map((data) => {
+               {products?.map((data, idx) => {
                   return (
-                     <tr className="border-b border-gray-200">
+                     <tr key={`table-product-${idx}`} className="border-b border-gray-200">
                         {checkable && (
                            <th scope="col" className="px-6 py-4 border-b border-gray-200">
                               <Checkbox
@@ -136,41 +146,69 @@ export function Table({ dataList = [], colums, checkable, onSort, onPagination, 
                      </tr>
                   );
                })}
-               {onPagination && (
+               {pagination && (
                   <tr className="border-b border-gray-200">
                      <th colSpan={7} scope="col" className="px-6 py-4 border-b border-gray-200">
                         <div className="flex items-center justify-between">
                            <div className="flex items-center gap-2">
                               <span className="text-sm font-normal">Show</span>
-                              <TextField eleSize="md" className="text-sm font-normal text-center" style={{ width: "50px" }} />
-                              <span className="text-sm font-normal">per page</span>
-                           </div>
-                           <div className="flex items-center gap-2">
-                              <button className="border p-2 rounded-sm border-gray-200 cursor-pointer" onClick={() => setParam("page", "1")}>
-                                 <HiOutlineChevronDoubleLeft color="#bcbdbe" />
-                              </button>
-                              <button className="border p-2 rounded-sm border-gray-200 cursor-pointer" onClick={() => setParam("page", String(page - 1))}>
-                                 <IoChevronBackSharp color="#bcbdbe" />
-                              </button>
                               <select //
                                  className="w-[50px] p-[5px] border rounded-sm border-gray-200 text-sm font-normal text-center"
-                                 onChange={(e) => setParam("page", e.target.value)}>
-                                 <option value="1">1</option>
-                                 <option value="2">2</option>
-                                 <option value="3">3</option>
-                                 <option value="4">4</option>
+                                 onChange={(e) => pagination?.onPagination({ limit: e.target.value })}
+                                 defaultValue={pagination?.limit}>
+                                 <option value="10">10</option>
+                                 <option value="15">15</option>
+                                 <option value="20">20</option>
+                                 <option value="25">25</option>
                               </select>
-                              <button
-                                 className="border p-2 rounded-sm border-gray-200 cursor-pointer rotate-[180deg]"
-                                 onClick={() => {
-                                    setParam("page", String(page + 1));
-                                 }}>
-                                 <IoChevronBackSharp color="#bcbdbe" />
-                              </button>
-                              <button className="border p-2 rounded-sm border-gray-200 cursor-pointer rotate-[180deg]" onClick={() => setParam("page", "4")}>
-                                 <HiOutlineChevronDoubleLeft color="#bcbdbe" />
-                              </button>
-                              <span className="text-sm font-normal">72 records</span>
+                           </div>
+                           <div className="flex items-center gap-2">
+                              {pagination?.currentPage > 1 && (
+                                 <React.Fragment>
+                                    <button //
+                                       className="border p-2 rounded-sm border-gray-200 cursor-pointer"
+                                       onClick={() => pagination?.onPagination({ page: 1 })}>
+                                       <HiOutlineChevronDoubleLeft color="#bcbdbe" />
+                                    </button>
+                                    <button //
+                                       className="border p-2 rounded-sm border-gray-200 cursor-pointer"
+                                       onClick={() => {
+                                          pagination?.onPagination({
+                                             page: pagination.currentPage - 1,
+                                          });
+                                       }}>
+                                       <IoChevronBackSharp color="#bcbdbe" />
+                                    </button>
+                                 </React.Fragment>
+                              )}
+                              <select //
+                                 className="w-[50px] p-[5px] border rounded-sm border-gray-200 text-sm font-normal text-center"
+                                 onChange={(e) => pagination?.onPagination({ page: e.target.value })}
+                                 defaultValue={pagination?.currentPage}>
+                                 {Array.from({ length: pagination?.totalPages }).map((_, idx) => (
+                                    <option value={idx + 1}>{idx + 1}</option>
+                                 ))}
+                              </select>
+                              {pagination.currentPage < pagination.totalPages && (
+                                 <React.Fragment>
+                                    <button
+                                       className="border p-2 rounded-sm border-gray-200 cursor-pointer rotate-[180deg]" //
+                                       onClick={() => {
+                                          pagination?.onPagination({
+                                             page: pagination.currentPage + 1,
+                                          });
+                                       }}>
+                                       <IoChevronBackSharp color="#bcbdbe" />
+                                    </button>
+                                    <button //
+                                       className="border p-2 rounded-sm border-gray-200 cursor-pointer rotate-[180deg]"
+                                       onClick={() => pagination?.onPagination({ page: pagination.totalPages })}>
+                                       <HiOutlineChevronDoubleLeft color="#bcbdbe" />
+                                    </button>
+                                 </React.Fragment>
+                              )}
+
+                              <span className="text-sm font-normal">{pagination?.totalRecords} records</span>
                            </div>
                         </div>
                      </th>
@@ -181,3 +219,31 @@ export function Table({ dataList = [], colums, checkable, onSort, onPagination, 
       </div>
    );
 }
+
+export function Table({ loading, ...props }: Props) {
+   if (loading) {
+      return (
+         <div className="overflow-x-auto">
+            <table className="min-w-full divide-y divide-gray-200">
+               <tbody className="divide-y divide-gray-200">
+                  {Array.from({ length: 4 }).map((_, idx) => (
+                     <tr key={idx}>
+                        <td className="px-4 py-4">
+                           <div className="h-4 w-3/4 animate-pulse rounded bg-gray-300"></div>
+                        </td>
+                        <td className="px-4 py-4">
+                           <div className="h-4 w-5/6 animate-pulse rounded bg-gray-300"></div>
+                        </td>
+                        <td className="px-4 py-4">
+                           <div className="h-4 w-1/2 animate-pulse rounded bg-gray-300"></div>
+                        </td>
+                     </tr>
+                  ))}
+               </tbody>
+            </table>
+         </div>
+      );
+   }
+   return <List {...props} />;
+}
+

@@ -40,6 +40,7 @@ export function Dropdown({ options, Component, OptionComponent, onChange, defaul
             <div className="absolute z-10 bg-white divide-gray-100 rounded-lg shadow-sm  px-3">
                {options.map((option) => (
                   <button
+                     key={option.value}
                      type="button"
                      className="block"
                      onClick={() => {

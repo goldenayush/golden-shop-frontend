@@ -1,8 +1,7 @@
 "use clinet";
-import { Card } from "@/shared/components";
+import { Card, PageHeader } from "@/shared/components";
 import Link from "next/link";
 import React from "react";
-import { IoArrowBack } from "react-icons/io5";
 import useSingleCustomerController from "./single-customer.controller";
 
 export default function SingleCustomerPage() {
@@ -11,23 +10,11 @@ export default function SingleCustomerPage() {
       <div className="p-7">
          <div className="grid grid-cols-12 gap-3">
             <div className="col-span-12">
-               <div className="flex items-center gap-3 mb-3">
-                  <button
-                     type="button"
-                     className="border p-2 rounded-sm cursor-pointer border-[#8c9196]
-                                                             text-[#6c7277]">
-                     <IoArrowBack size={22} />
-                  </button>
-                  <h2 className="text-[20px] font-semibold">
-                     {/*  */}
-                     Editing [user]
-                     {/*  */}
-                  </h2>
-               </div>
+               <PageHeader backLink="/admin/customers" heading="Editing [user]" />
             </div>
             <div className="col-span-8">
                <Card heading={<span className="px-3">Order History</span>} className="py-3">
-                  {ctrl.meOrders.map((order, idx) => {
+                  {ctrl.meOrders?.map((order, idx) => {
                      const showHr = ctrl.meOrders?.length - 1 > idx;
                      return (
                         <React.Fragment key={`meOrder-${idx}`}>

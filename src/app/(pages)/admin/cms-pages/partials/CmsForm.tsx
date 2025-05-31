@@ -1,10 +1,9 @@
 "use client";
 import React, { useState } from "react";
 import { TextareaFormik, TextFieldFormik } from "@/libs/formik";
-import { Card, Editor } from "@/shared/components";
+import { Card, Editor, PageHeader } from "@/shared/components";
 import { Button, Label, Switch } from "@/shared/ui";
 import { Field, Form, Formik } from "formik";
-import { IoArrowBack } from "react-icons/io5";
 
 const fields = {
    name: "about",
@@ -22,14 +21,10 @@ export default function CmsForm({ id }: { id?: string }) {
    const [initialValues, setInitialValues] = useState(fields);
    return (
       <div className="p-7">
-         <div className="flex items-center gap-3 mb-3">
-            <button type="button" className="border p-2 rounded-sm cursor-pointer border-[#8c9196] text-[#6c7277]">
-               <IoArrowBack size={22} />
-            </button>
-            <h2 className="text-[20px] font-semibold">
-                {id ? "Editing [About]" : "Create a new page"}
-            </h2>
-         </div>
+         <PageHeader //
+            backLink="/admin/cms-pages"
+            heading={id ? "Editing [About]" : "Create a new page"}
+         />
          <Formik initialValues={initialValues} onSubmit={(e) => console.log(e)}>
             {(formik) => {
                return (

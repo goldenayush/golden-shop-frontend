@@ -1,6 +1,12 @@
 // global reusable components for application
+export { PageHeader } from "./PageHeader";
 export { Card } from "./Card";
 export { Editor } from "./Editor";
 export { Modal } from "./Modal";
 export { Table } from "./Table";
 export { FormikTable } from "./FormikTable";
+export { ClientWrapper } from "./ClientWrapper";
+export { Loading } from "./Loading";
+export { OffCanvas } from "./OffCanvas";
+export { DataSetter } from "./DataSetter";
+export { Location } from "./Location";

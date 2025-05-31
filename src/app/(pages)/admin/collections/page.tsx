@@ -1,5 +1,5 @@
 "use client";
-import { Card, Table } from "@/shared/components";
+import { Card, Table, PageHeader } from "@/shared/components";
 import Link from "next/link";
 import React from "react";
 import useCollectionsController from "./collections.controller";
@@ -7,13 +7,14 @@ import useCollectionsController from "./collections.controller";
 export default function CollectionsPage() {
    const ctrl = useCollectionsController();
    return (
-      <div className="py-7 w-full md:w-[70%] mx-auto">
-         <div className="flex items-center justify-between mb-4">
-            <h3 className="text-[20px] font-semibold">Collections</h3>
-            <Link href={"/admin/collections/create-collection"} type="button" className="bg-[#008060] text-white py-2 px-4 rounded-sm text-[14px] font-semibold cursor-pointer">
-               New Collection
-            </Link>
-         </div>
+      <div className="py-7 px-4 w-full md:w-[70%] mx-auto">
+         <PageHeader //
+            heading="Collections"
+            action={{
+               link: "/admin/collections/create-collection",
+               title: "New Collection",
+            }}
+         />
          <div>
             <Card className="bg-white">
                <div className="flex items-center justify-between p-4">
@@ -21,6 +22,8 @@ export default function CollectionsPage() {
                      type="text"
                      className="border border-gray-300 rounded-sm text-[12px] px-3 py-1 placeholder:text-[12px] placeholder:font-semibold"
                      placeholder="Search"
+                     onChange={ctrl.debounce.onSearchChange}
+                     value={ctrl.debounce.searchKey}
                   />
                   <div>
                      <Link href="/admin/collections" className="text-[14px] text-blue-500 hover:underline" replace>
@@ -29,33 +32,42 @@ export default function CollectionsPage() {
                   </div>
                </div>
                <Table
+                  loading={ctrl.isFetching}
                   checkable
                   checkEventList={[
                      {
                         label: "Delete",
                         event(param) {
-                           console.log(param);
+                           ctrl.onDelateAttributes(param);
                         },
                      }, //
                   ]}
                   colums={[
                      { label: "ID", key: "id" }, //
-                     { label: "Collection Name", key: "collection_name", sort: true },
+                     { label: "Collection Name", key: "name", sort: true },
                      { label: "Code", key: "code", sort: true },
                   ]}
-                  dataList={ctrl.collections.map((item) => ({
+                  dataList={ctrl?.data?.map((item) => ({
                      id: item.id,
-                     collection_name: (
+                     name: (
                         <Link href={`/admin/collections/${item?.id}`} className="text-[14px] font-semibold hover:underline">
-                           {item?.collection_name}
+                           {item.name}
                         </Link>
                      ),
                      code: item.code,
                   }))}
                   onSort={(param) => {
-                     console.log(param);
+                     ctrl.setParam(param);
                   }}
-                  onPagination={() => {}}
+                  pagination={{
+                     currentPage: 1,
+                     totalPages: 1,
+                     totalRecords: 1,
+                     limit: 1,
+                     onPagination(param) {
+                        ctrl.setParam(param);
+                     },
+                  }}
                />
             </Card>
          </div>

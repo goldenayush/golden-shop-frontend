@@ -2,19 +2,21 @@
 import React from "react";
 import useCategoriesController from "./categories.controller";
 import Link from "next/link";
-import { Card, Table } from "@/shared/components";
+import { Card, PageHeader, Table } from "@/shared/components";
 import { GoDotFill } from "react-icons/go";
 
 export default function CategoriesPage() {
    const ctrl = useCategoriesController();
+
    return (
       <div className="p-7">
-         <div className="flex items-center justify-between mb-4">
-            <h3 className="text-[20px] font-semibold">Categories</h3>
-            <Link href={"/admin/categories/create-product"} type="button" className="bg-[#008060] text-white py-2 px-4 rounded-sm text-[14px] font-semibold cursor-pointer">
-               New Category
-            </Link>
-         </div>
+         <PageHeader //
+            heading="Categories"
+            action={{
+               title: "New Category",
+               link: "/admin/categories/create-category",
+            }}
+         />
          <div>
             <Card className="bg-white">
                {/*--------------filter--------------------*/}
@@ -23,6 +25,8 @@ export default function CategoriesPage() {
                      type="text"
                      className="border border-gray-300 rounded-sm text-[12px] px-3 py-1 placeholder:text-[12px] placeholder:font-semibold"
                      placeholder="Search"
+                     value={ctrl.debounce.searchKey}
+                     onChange={ctrl.debounce.onSearchChange}
                   />
                   <div>
                      <Link href="/admin/categories" className="text-[14px] text-blue-500 hover:underline" replace>
@@ -31,45 +35,62 @@ export default function CategoriesPage() {
                   </div>
                </div>
                <Table //
+                  loading={ctrl.fetchCategories.isLoading}
                   checkable
                   checkEventList={[
                      {
                         label: "Delete",
-                        event: (param: any[]) => console.log(param), //
+                        loading: ctrl.deleteMultipleCategory.isLoading,
+                        event: ctrl.onSeleteMultipleCategory, //
                      },
                   ]}
                   colums={[
-                     { label: "Category Name", key: "category_name", sort: true }, //
+                     { label: "Category Name", key: "name", sort: true }, //
                      { label: "Status", key: "status", sort: true }, //
-                     { label: "Include In Menu", key: "include_in_menu", sort: true },
+                     { label: "Include In Menu", key: "includeInNav", sort: true },
                   ]}
-                  dataList={ctrl.categories.map((data) => ({
-                     id: data.id,
-                     category_name: (
-                        <Link href={`/admin/categories/${data?.id}`} className="text-[14px] font-semibold hover:underline">
-                           {data?.category_name}
-                        </Link>
-                     ),
-                     status: (
-                        <span className="text-[14px]">
-                           {data?.status === "active" ? ( //
-                              <GoDotFill size={20} color="#aee9d1" />
-                           ) : (
-                              <GoDotFill size={20} color="#cecece" />
-                           )}
-                        </span>
-                     ),
-                     include_in_menu: (
-                        <span className="text-[14px]">
-                           {/*  */}
-                           {data?.include_in_menu ? "Yes" : "No"}
-                        </span>
-                     ),
-                  }))}
+                  dataList={ctrl.fetchCategories?.data?.map((data) => {
+                     const breadcrumbs = ctrl.fetchCategories?.data
+                        ?.filter((el) => data?.id !== el?.parentId)
+                        .map((el) => el?.CategoryDescription.name)
+                        .join(" > ");
+
+                     return {
+                        id: data.id,
+                        name: (
+                           <Link href={`/admin/categories/${data?.id}`} className="text-[14px] font-semibold hover:underline">
+                              {ctrl.getBreadcrumbs(data?.id, ctrl.fetchCategories?.data)}
+                           </Link>
+                        ),
+                        status: (
+                           <span className="text-[14px]">
+                              {data?.status ? ( //
+                                 <GoDotFill size={20} color="#aee9d1" />
+                              ) : (
+                                 <GoDotFill size={20} color="#cecece" />
+                              )}
+                           </span>
+                        ),
+                        includeInNav: (
+                           <span className="text-[14px]">
+                              {/*  */}
+                              {data.includeInNav ? "Yes" : "No"}
+                           </span>
+                        ),
+                     };
+                  })}
                   onSort={(param) => {
-                     console.log(param);
+                     ctrl.setParam(param);
                   }}
-                  onPagination={() => {}}
+                  pagination={{
+                     currentPage: ctrl?.fetchCategories?.pagination?.page,
+                     totalPages: 4,
+                     totalRecords: 20,
+                     limit: ctrl?.fetchCategories?.pagination?.limit,
+                     onPagination(param) {
+                        ctrl.setParam(param);
+                     },
+                  }}
                />
             </Card>
          </div>

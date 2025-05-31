@@ -10,6 +10,8 @@ type Props = {
    children: React.ReactNode;
    closeable?: boolean;
    className?: string;
+   isFragment?: boolean;
+   placement?: "top" | "center" | "bottom";
 };
 
 export const Modal = forwardRef(
@@ -20,10 +22,17 @@ export const Modal = forwardRef(
          closeable,
          className,
          children,
+         isFragment,
+         placement,
       }: Props,
       ref
    ) => {
       const [isOpen, setIsOpen] = useState(false);
+      const placementClass = {
+         top: "items-start",
+         center: "items-center",
+         bottom: "items-end",
+      }[placement || "center"];
 
       useImperativeHandle(ref, () => ({ setIsOpen }), []);
 
@@ -32,13 +41,18 @@ export const Modal = forwardRef(
          md: "w-96", // 24rem
          lg: "w-[32rem]", // 32rem
          xl: "w-[40rem]", // 40rem
-         full: "w-full max-w-screen-lg mx-4", // Full with margin
+         full: "w-full max-w-screen-lg", // Full with margin
       }[size];
-
+      if (isFragment) {
+         return children;
+      }
       return (
          <>
             {isOpen && (
-               <div className="fixed inset-0 z-50 flex items-center justify-center bg-opacity-50 modal-fade-in" style={styles.overlay} onClick={() => closeable && setIsOpen(false)}>
+               <div //
+                  className={`fixed inset-0 z-50 flex ${placementClass} justify-center bg-opacity-50 modal-fade-in overflow-y-auto`}
+                  style={styles.overlay}
+                  onClick={() => closeable && setIsOpen(false)}>
                   <div className={`bg-white rounded shadow ${sizeClass} ${className ? " " + className : ""}`} onClick={(e) => e.stopPropagation()}>
                      {title && (
                         <div className="flex justify-between items-center mb-4">

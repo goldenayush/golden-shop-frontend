@@ -1,6 +1,6 @@
 "use client";
 import React from "react";
-import { Card, Table } from "@/shared/components";
+import { Card, PageHeader, Table } from "@/shared/components";
 import Link from "next/link";
 import { GoDotFill } from "react-icons/go";
 import { FaCaretUp } from "react-icons/fa";
@@ -10,26 +10,29 @@ import useProductsController from "./products.controller";
 export default function AdminProductsPage() {
    const ctrl = useProductsController();
    return (
-      <div className="p-7">
-         <div className="flex items-center justify-between mb-4">
-            <h3 className="text-[20px] font-semibold">Products</h3>
-            <Link href={"/admin/products/create-product"} type="button" className="bg-[#008060] text-white py-2 px-4 rounded-sm text-[14px] font-semibold cursor-pointer">
-               New Products
-            </Link>
-         </div>
+      <div className="p-3 md:p-7">
+         <PageHeader //
+            heading="Products"
+            action={{
+               title: "New Products",
+               link: "/admin/products/create-product",
+            }}
+         />
          <div>
             <Card className="bg-white">
                {/*--------------filter--------------------*/}
                <div className="flex items-center justify-between p-4">
-                  <div className="flex items-center gap-4">
-                     <input //
-                        type="text"
-                        value={ctrl.searchKey}
-                        className="border border-gray-300 rounded-sm text-[12px] px-3 py-1 placeholder:text-[12px] placeholder:font-semibold"
-                        placeholder="Search"
-                        onChange={ctrl.onSearchChange}
-                     />
-                     <div>
+                  <div className="grid grid-cols-12 items-center gap-4">
+                     <div className="col-span-12 md:col-span-4">
+                        <input //
+                           type="text"
+                           className="border border-gray-300 rounded-sm text-[12px] px-3 py-1 placeholder:text-[12px] placeholder:font-semibold"
+                           placeholder="Search"
+                           value={ctrl.debounce.searchKey}
+                           onChange={ctrl.debounce.onSearchChange}
+                        />
+                     </div>
+                     <div className="col-span-12 md:col-span-8 flex items-center gap-3">
                         <Dropdown //
                            options={[
                               { value: "1", label: "enabled" }, //
@@ -48,12 +51,8 @@ export default function AdminProductsPage() {
                                  {/*  */}
                               </span>
                            )}
-                           onChange={(value) => {
-                              ctrl.setParam("status", value);
-                           }}
+                           onChange={(value) => ctrl.setParam({ status: value })}
                         />
-                     </div>
-                     <div>
                         <Dropdown //
                            options={[
                               { value: "simple", label: "simple" }, //
@@ -71,9 +70,7 @@ export default function AdminProductsPage() {
                                  {props.label}
                               </span>
                            )}
-                           onChange={(value) => {
-                              ctrl.setParam("type", value);
-                           }}
+                           onChange={(value) => ctrl.setParam({ productType: value })}
                         />
                      </div>
                   </div>
@@ -86,48 +83,52 @@ export default function AdminProductsPage() {
 
                {/*--------------table--------------------*/}
                <Table
+                  loading={ctrl.getProducts.isLoading}
                   checkable
                   checkEventList={[
                      {
+                        loading: ctrl?.updateStatusProduct.isLoading,
                         label: "Disable",
-                        event: (params) => console.log(params), //
+                        event: (params) => ctrl.onUpdateStatusProduct(params, false), //
                      },
                      {
+                        loading: ctrl?.updateStatusProduct.isLoading,
                         label: "Enable",
-                        event: (params) => console.log(params), //
+                        event: (params) => ctrl.onUpdateStatusProduct(params, true), //
                      },
                      {
+                        loading: ctrl?.deleteProduct.isLoading,
                         label: "Delete",
-                        event: (params) => console.log(params), //
+                        event: (params) => ctrl.onDeleteProduct(params), //
                      },
                   ]}
                   colums={[
-                     { key: "thumbnail", label: "THUMBNAIL" }, //
+                     { key: "singleImage", label: "THUMBNAIL" }, //
                      { key: "name", label: "NAME", sort: true },
                      { key: "price", label: "PRICE", sort: true },
                      { key: "sku", label: "SKU" },
-                     { key: "stock", label: "STOCK", sort: true },
+                     { key: "manageStock", label: "STOCK", sort: true },
                      { key: "status", label: "STATUS", sort: true },
                   ]}
-                  dataList={ctrl.products?.map((data) => {
+                  dataList={ctrl.getProducts?.data?.map((data) => {
                      return {
                         id: data.id,
-                        thumbnail: (
+                        singleImage: (
                            <div className="border border-[#e1e3e5] rounded-[3px] w-[60px] p-1">
-                              <img src={data?.thumbnail} alt="img" className="w-full" />
+                              <img src={data?.productImages?.[0]?.listingImage} alt="img" className="w-full" />
                            </div>
                         ),
                         name: (
                            <Link href={`/admin/products/${data?.id}`} className="text-[14px] font-semibold hover:underline">
-                              {data?.name}
+                              {data?.productDescription?.name}
                            </Link>
                         ),
                         price: <span className="text-[14px]">₹{data?.price}</span>,
                         sku: <span className="text-[14px]">{data?.sku}</span>,
-                        stock: <span className="text-[14px]">{data?.stock}</span>,
+                        manageStock: <span className="text-[14px]">{data?.productInventory?.qty}</span>,
                         status: (
                            <span className="text-[14px]">
-                              {data?.status === "active" ? ( //
+                              {data?.status ? ( //
                                  <GoDotFill size={20} color="#aee9d1" />
                               ) : (
                                  <GoDotFill size={20} color="#cecece" />
@@ -136,10 +137,16 @@ export default function AdminProductsPage() {
                         ),
                      };
                   })}
-                  onSort={(params) => {
-                     ctrl.queryString(params);
+                  onSort={(params) => ctrl.setParam(params)}
+                  pagination={{
+                     currentPage: 1,
+                     totalPages: 3,
+                     totalRecords: 112,
+                     limit: 12,
+                     onPagination(param) {
+                        ctrl.setParam(param);
+                     },
                   }}
-                  onPagination={(param) => console.log(param)}
                />
             </Card>
          </div>

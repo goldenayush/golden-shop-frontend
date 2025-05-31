@@ -1,7 +1,7 @@
 "use client";
 import React from "react";
 import useCmsController from "./cms.controller";
-import { Card, Table } from "@/shared/components";
+import { Card, PageHeader, Table } from "@/shared/components";
 import Link from "next/link";
 import { GoDotFill } from "react-icons/go";
 
@@ -9,7 +9,13 @@ export default function CmsPage() {
    const ctrl = useCmsController();
    return (
       <div className="p-7">
-         <h3 className="text-[20px] font-semibold mb-4">Cms Pages</h3>
+         <PageHeader
+            heading="Cms Pages"
+            action={{
+               title: "New Page",
+               link: "/admin/cms-pages/create-page",
+            }}
+         />
          <Card className="bg-white">
             {/*--------------filter--------------------*/}
             <div className="flex items-center justify-between p-4 border-b border-gray-300">
@@ -46,7 +52,7 @@ export default function CmsPage() {
                   { label: "Name", key: "name", sort: true }, //
                   { label: "Status", key: "status", sort: true },
                ]}
-               dataList={ctrl.pages.map((data) => ({
+               dataList={ctrl.pages?.map((data) => ({
                   id: data.id,
                   name: (
                      <Link href={`/admin/cms-pages/${data?.id}`} className="text-[14px] font-semibold hover:underline">

@@ -1,18 +1,16 @@
 "use client";
 import React from "react";
 import useOrdersController from "./orders.controller";
-import { Card, Table } from "@/shared/components";
+import { Card, PageHeader, Table } from "@/shared/components";
 import Link from "next/link";
-import { GoDotFill } from "react-icons/go";
 import { Badge, Dropdown } from "@/shared/ui";
 import { FaCaretUp, FaCircle, FaRegCircle } from "react-icons/fa";
 
 export default function OrdersPage() {
    const ctrl = useOrdersController();
-
    return (
       <div className="p-7">
-         <h3 className="text-[20px] font-semibold mb-4">Orders</h3>
+         <PageHeader heading="Orders" />
          <Card className="bg-white">
             {/*--------------filter--------------------*/}
             <div className="flex items-center justify-between p-4">
@@ -163,8 +161,3 @@ export default function OrdersPage() {
       </div>
    );
 }
-
-type IShipmentStatus = {
-   status: string;
-   title: string;
-};

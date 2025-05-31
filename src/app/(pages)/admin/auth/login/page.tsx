@@ -4,6 +4,7 @@ import React from "react";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import useLoginController from "./login.controller";
+import Footer from "../../components/Footer";
 
 export default function LoginPage() {
    const ctrl = useLoginController();
@@ -24,21 +25,18 @@ export default function LoginPage() {
                      <ErrorMessage component="small" name="email" className="text-red-500" />
                   </div>
                   <div className="mt-4">
-                     <Field as={TextField} type="password" label="Password" name="password" id="password" placeholder="Password" />
+                     <Field as={TextField} type="text" label="Password" name="password" id="password" placeholder="Password" />
                      <ErrorMessage component="small" name="password" className="text-red-500" />
                   </div>
                   <hr className="my-2 border-[#e5e7eb]" />
                   <div>
-                     <Button loading type="submit" className="text-white bg-[#008060] w-full uppercase py-[12px] text-[14px] font-semibold cursor-pointer  rounded-[3px]">
+                     <Button type="submit" className="text-white bg-[#008060] w-full uppercase py-[12px] text-[14px] font-semibold cursor-pointer  rounded-[3px]" loading={ctrl.login?.isLoading}>
                         sign in{" "}
                      </Button>
                   </div>
                </div>
             </div>
-            <div className="border-t-1 border-t-[#e5e7eb] bg-[#f6f6f7fc] py-[20px] px-[30px] text-[#8c9196]">
-               <p className="text-[14px]">© 2022 Evershop. All Rights Reserved.</p>
-               <p className="text-[14px]">Version 1.2.2</p>
-            </div>
+            <Footer />
          </Form>
       </Formik>
    );

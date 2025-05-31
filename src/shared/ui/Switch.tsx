@@ -1,7 +1,7 @@
 import React from "react";
 
 type FeatureProps = {
-   label?: string;
+   label?: string | JSX.Element;
    eleSize?: "sm" | "md" | "lg";
 };
 type Props = React.DetailedHTMLProps<React.InputHTMLAttributes<HTMLInputElement>, HTMLInputElement> & FeatureProps;

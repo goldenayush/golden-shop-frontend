@@ -2,50 +2,66 @@ import { TextFieldFormik } from "@/libs/formik";
 import { Card } from "@/shared/components";
 import { Button, Label, Radio, TextField } from "@/shared/ui";
 import { FieldArray, Form, Formik } from "formik";
-import React, { useRef, useState } from "react";
-import { IoIosAddCircleOutline } from "react-icons/io";
-import { IoArrowBack } from "react-icons/io5";
-import Select from "react-select";
+import React, { useEffect, useState } from "react";
+import AttributeGroup from "./AttributeGroup";
+import { IAttribute } from "@/types/attribute.types";
 
-const fields = {
-   name: "",
-   attribute_code: "",
-   type: "",
-   attribute_group: [],
-   isRequired: 0,
-   isFilterable: 0,
-   isShowCustomer: 0,
-   sort_order: "",
+type Props = {
+   onSubmit: (data: any) => Promise<void>;
+   loading?: boolean;
+   patchValues?: IAttribute | null;
 };
+export default function AttributeForm({ onSubmit, loading, patchValues }: Props) {
+   const [fields, setFields] = useState({
+      attributeName: "",
+      attributeCode: "",
+      type: "",
+      groupIds: [] as string[],
+      isRequired: 0,
+      isFilterable: 0,
+      displayOnFrontEnd: 0,
+      sortOrder: "",
+   });
 
-export default function AttributeForm({ id }: { id?: string }) {
-   const [groupName, setGroupName] = useState("");
-   const [groupOptions, setGroupOptions] = useState<{ label: string; value: string }[]>([]);
+   useEffect(() => {
+      if (patchValues) {
+         const attributeOption = patchValues?.attributeOption;
+         console.log(patchValues.AttributeGroupAttribute);
+         setFields({
+            attributeName: patchValues?.attributeName,
+            attributeCode: patchValues?.attributeCode,
+            type: patchValues?.type,
+            groupIds: patchValues?.AttributeGroupAttribute?.map((x) => x?.attributeGroupId),
+            isRequired: Number(patchValues?.isRequired),
+            isFilterable: Number(patchValues?.isFilterable),
+            displayOnFrontEnd: Number(patchValues?.displayOnFrontEnd),
+            sortOrder: patchValues?.sortOrder as any,
+            ...(attributeOption ? { attributeOption } : {}),
+         });
+      }
+      return () => {};
+   }, [patchValues]);
+
    return (
-      <Formik initialValues={fields} onSubmit={(value) => console.log(value)}>
+      <Formik //
+         enableReinitialize={Boolean(patchValues)}
+         initialValues={fields}
+         onSubmit={onSubmit}>
          {(formik) => (
-            <Form className="grid grid-cols-12 gap-3 p-7">
-               <div className="col-span-12">
-                  <div className="flex items-center gap-3 mb-3">
-                     <button type="button" className="border p-2 rounded-sm cursor-pointer border-[#8c9196] text-[#6c7277]">
-                        <IoArrowBack size={22} />
-                     </button>
-                     <h2 className="text-[20px] font-semibold">{id ? "Editing [Size]" : "Create a new attribute"}</h2>
-                  </div>
-               </div>
-               <div className="col-span-8">
+            <Form className="grid grid-cols-12 gap-3">
+               <div className="col-span-12 lg:col-span-8">
                   <Card heading="General" className="p-4">
                      <div className="mb-2">
-                        <TextFieldFormik label="Name" name="name" id="name" />
+                        <TextFieldFormik label="Name" name="attributeName" id="attributeName" />
                      </div>
                      <div className="mb-2">
-                        <TextFieldFormik label="Attribute code" name="attribute_code" id="attribute_code" />
+                        <TextFieldFormik label="Attribute code" name="attributeCode" id="attributeCode" />
                      </div>
                      <div>
                         <Label>Type</Label>
                         <div className="mt-2">
-                           {["text", "select", "multiselect", "textarea"].map((item) => (
-                              <div className="mb-1">
+                           {["text", "select", "multiSelect", "textArea"].map((item) => (
+                              <div className="mb-1" key={item}>
                                  <Radio //
                                     label={item}
                                     name="type"
@@ -59,21 +75,21 @@ export default function AttributeForm({ id }: { id?: string }) {
                            ))}
                         </div>
                      </div>
-                     {["multiselect", "select"].includes(formik.values.type) && (
+                     {["multiSelect", "select"].includes(formik.values.type) && (
                         <>
                            <hr className="border-t border-gray-300 my-3" />
                            <FieldArray //
-                              name="attribute_options"
+                              name="attributeOption"
                               render={(arrayHelpers) => {
-                                 const options: string[] = (formik.values as any)?.attribute_options || [];
+                                 const options: string[] = (formik.values as any)?.attributeOption || [];
                                  return (
                                     <>
                                        <Label className="uppercase text-[12px] font-semibold block mb-2">Attribute options</Label>
                                        {options.map((_, idx) => (
-                                          <div className="flex items-center gap-5 mb-1">
+                                          <div key={`attribute-option-${idx}`} className="flex items-center gap-5 mb-1">
                                              <TextFieldFormik //
-                                                name={`attribute_options.${idx}`}
-                                                id={`attribute_options-${idx}`}
+                                                name={`attributeOption.${idx}.optionText`}
+                                                id={`attributeOption-${idx}`}
                                                 style={{ width: "250px" }}
                                              />
                                              <button type="button" className="text-[14px] text-red-500 cursor-pointer hover:underline" onClick={() => arrayHelpers.remove(idx)}>
@@ -90,44 +106,13 @@ export default function AttributeForm({ id }: { id?: string }) {
                            />
                         </>
                      )}
-                     <div className="border-t border-gray-300 py-2 mt-3">
-                        <span className="uppercase text-[12px] font-semibold block mb-2">Attribute Group</span>
-                        <div className="grid grid-cols-2 gap-2">
-                           <Select
-                              isMulti
-                              hideSelectedOptions
-                              options={groupOptions}
-                              onChange={(list) => {
-                                 let li = list?.map((list) => list?.value);
-                                 formik.setFieldValue("attribute_group", li);
-                              }}
-                           />
-                           <div>
-                              {" "}
-                              <TextField //
-                                 name="name"
-                                 placeholder="Create a new group"
-                                 value={groupName}
-                                 suffixIcon={
-                                    <IoIosAddCircleOutline //
-                                       onClick={() => {
-                                          setGroupOptions([...groupOptions, { label: groupName, value: groupName }]);
-                                          setGroupName("");
-                                       }}
-                                       className="cursor-pointer text-blue-400"
-                                       size={20}
-                                    />
-                                 }
-                                 onChange={(e) => {
-                                    setGroupName(e.target.value);
-                                 }}
-                              />
-                           </div>
-                        </div>
-                     </div>
+                     <AttributeGroup //
+                        setFieldValue={formik.setFieldValue}
+                        values={formik.values?.groupIds}
+                     />
                   </Card>
                </div>
-               <div className="col-span-4">
+               <div className="col-span-12 lg:col-span-4">
                   <Card heading="Setting" className="p-4">
                      <div>
                         <Label className="text-xs block font-semibold mb-3">Is Required?</Label>
@@ -171,26 +156,26 @@ export default function AttributeForm({ id }: { id?: string }) {
                         <Label className="text-xs block font-semibold mb-3">Show to customers?</Label>
                         <Radio //
                            label="No"
-                           name="isShowCustomer"
-                           onChange={(e) => formik.setFieldValue("isShowCustomer", +e.target.value)}
+                           name="displayOnFrontEnd"
+                           onChange={(e) => formik.setFieldValue("displayOnFrontEnd", +e.target.value)}
                            value="0"
-                           checked={formik.values.isShowCustomer === 0}
+                           checked={formik.values.displayOnFrontEnd === 0}
                         />
                         <div className="mb-1" />
                         <Radio //
                            label="Yes"
-                           name="isShowCustomer"
-                           onChange={(e) => formik.setFieldValue("isShowCustomer", +e.target.value)}
+                           name="displayOnFrontEnd"
+                           onChange={(e) => formik.setFieldValue("displayOnFrontEnd", +e.target.value)}
                            value="1"
-                           checked={formik.values.isShowCustomer === 1}
+                           checked={formik.values.displayOnFrontEnd === 1}
                         />
                         <hr className="border-t border-gray-300 my-5" />
                      </div>
                      <div>
                         <TextFieldFormik //
                            label="Sort order"
-                           name="sort_order"
-                           id="sort_order"
+                           name="sortOrder"
+                           id="sortOrder"
                         />
                      </div>
                   </Card>
@@ -206,7 +191,7 @@ export default function AttributeForm({ id }: { id?: string }) {
                      </div>
                      {/* Save button  */}
                      <div>
-                        <Button type="submit" className="bg-[#008060] text-white py-2 px-4 rounded-sm text-[14px] font-semibold cursor-pointer">
+                        <Button type="submit" className="bg-[#008060] text-white py-2 px-4 rounded-sm text-[14px] font-semibold cursor-pointer" loading={loading}>
                            Save
                         </Button>
                      </div>

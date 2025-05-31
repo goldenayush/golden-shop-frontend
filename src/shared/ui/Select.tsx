@@ -9,7 +9,7 @@ type FeatureProps = {
    eleSize?: "sm" | "md" | "lg";
 };
 
-type Props = React.DetailedHTMLProps<React.SelectHTMLAttributes<HTMLSelectElement>, HTMLSelectElement> & FeatureProps;
+export type SelectProps = React.DetailedHTMLProps<React.SelectHTMLAttributes<HTMLSelectElement>, HTMLSelectElement> & FeatureProps;
 
 const SELECT_SIZE_TYPE = {
    sm: "px-[12px] py-[2px] h-[25px] text-[12px] rounded-sm",
@@ -17,7 +17,7 @@ const SELECT_SIZE_TYPE = {
    lg: "px-[12px] py-[8px] h-[50px] text-[16px] rounded-lg",
 };
 
-export function Select({ label, options, placeholder, eleSize, ...props }: Props) {
+export function Select({ label, options, placeholder, eleSize, ...props }: SelectProps) {
    return (
       <>
          {label && <Label htmlFor={props.id}>{label}</Label>}

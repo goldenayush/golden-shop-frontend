@@ -1,37 +1,34 @@
 import React from "react";
-import useSingleOrderController from "./single-order.controller";
-import { IoArrowBack } from "react-icons/io5";
-import { Badge } from "@/shared/ui";
-import { FaRegCircle } from "react-icons/fa";
-import { Card } from "@/shared/components";
+import { Card, PageHeader } from "@/shared/components";
 import { ImRadioChecked } from "react-icons/im";
 import { GoDotFill } from "react-icons/go";
+import useSingleOrderController from "./single-order.controller";
+import { Badge } from "@/shared/ui";
+import { FaRegCircle } from "react-icons/fa";
 
 export default function SingleOrderPage() {
    const ctrl = useSingleOrderController();
    return (
       <div className="p-7">
-         <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-               <button type="button" className="border p-2 rounded-sm cursor-pointer border-[#8c9196] text-[#6c7277]">
-                  <IoArrowBack size={22} />
+         <PageHeader
+            backLink="/admin/orders"
+            heading={
+               <span className="flex gap-3">
+                  Editing #10001{" "}
+                  <Badge //
+                     title="New"
+                     bg="#E4E5E7"
+                     color="#202223"
+                     iconBefore={<FaRegCircle size={10} />}
+                  />
+               </span>
+            }
+            extra={
+               <button type="button" className="bg-[#d72c0d] hover:bg-[#bc2200] py-[7px] px-[16px] rounded-[3px] text-[14px] text-white cursor-pointer">
+                  Cancel Order
                </button>
-               <h2 className="text-[20px] font-semibold">
-                  {/*  */}
-                  Editing #10001
-                  {/*  */}
-               </h2>
-               <Badge //
-                  title="New"
-                  bg="#E4E5E7"
-                  color="#202223"
-                  iconBefore={<FaRegCircle size={10} />}
-               />
-            </div>
-            <button type="button" className="bg-[#d72c0d] hover:bg-[#bc2200] py-[7px] px-[16px] rounded-[3px] text-[14px] text-white cursor-pointer">
-               Cancel Order
-            </button>
-         </div>
+            }
+         />
          <div className="grid grid-cols-12 gap-2">
             <div className="col-span-8">
                {/* Pending */}
@@ -125,8 +122,8 @@ export default function SingleOrderPage() {
                <div>
                   <h3 className="text-[16px] font-semibold mt-5">Activities</h3>
                   <hr className="border-t border-gray-300 my-4" />
-                  {[1, 2].map(() => (
-                     <div className="border-l-2 border-[#e1e3e5] h-[130px] relative">
+                  {[1, 2].map((_, idx) => (
+                     <div key={`sefg12d-${idx}`} className="border-l-2 border-[#e1e3e5] h-[130px] relative">
                         <div className="flex items-center absolute w-full bottom-2 left-[-10px] ">
                            <GoDotFill color="#8c9196" size={20} className="p-[2px] bg-[#F6F6F7] absolute top-9" />
                            <div className="flex-[1_1_auto] px-10">

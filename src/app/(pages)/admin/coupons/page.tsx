@@ -2,7 +2,7 @@
 import React from "react";
 import useCouponsController from "./coupons.controller";
 import Link from "next/link";
-import { Card, Table } from "@/shared/components";
+import { Card, PageHeader, Table } from "@/shared/components";
 import { Dropdown } from "@/shared/ui";
 import { FaCaretUp } from "react-icons/fa";
 import { GoDotFill } from "react-icons/go";
@@ -11,12 +11,13 @@ export default function CouponsPage() {
    const ctrl = useCouponsController();
    return (
       <div className="p-7">
-         <div className="flex items-center justify-between mb-4">
-            <h3 className="text-[20px] font-semibold">Coupons</h3>
-            <Link href={"/admin/coupons/create-coupon"} type="button" className="bg-[#008060] text-white py-2 px-4 rounded-sm text-[14px] font-semibold cursor-pointer">
-               New Coupons
-            </Link>
-         </div>
+         <PageHeader
+            heading="Coupons"
+            action={{
+               link: "/admin/coupons/create-coupon",
+               title: "New Coupons",
+            }}
+         />
          <div>
             <Card className="bg-white">
                {/*--------------filter--------------------*/}

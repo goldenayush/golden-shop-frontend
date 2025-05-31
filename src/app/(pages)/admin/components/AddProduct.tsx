@@ -15,8 +15,8 @@ export default function AddProduct() {
                <button className="text-[14px] text-blue-600 cursor-pointer">Next</button>
             </div>
          </div>
-         {[1, 2, 3, 4, 5].map((_) => (
-            <div className="flex items-center justify-between py-2 border-b border-gray-300">
+         {[1, 2, 3, 4, 5].map((_, idx) => (
+            <div key={`add-product-${idx}`} className="flex items-center justify-between py-2 border-b border-gray-300">
                <div className="flex items-center gap-3">
                   <div className="border border-[#e1e3e5] rounded-[3px] w-[60px] p-1">
                      <img src="http://admin.mrvcreations.in/assets/catalog/5955/1162/acceseries39-thumb.png" alt="img" className="w-full p-[2px]" />

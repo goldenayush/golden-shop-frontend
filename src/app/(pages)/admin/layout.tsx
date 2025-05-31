@@ -1,130 +1,66 @@
 "use client";
-import { AiFillDashboard } from "react-icons/ai";
-import { FaBucket } from "react-icons/fa6";
-import { RiCoupon3Fill } from "react-icons/ri";
-import { FaTag } from "react-icons/fa6";
-import { FaLink, FaUserFriends } from "react-icons/fa";
-import { FaHashtag } from "react-icons/fa";
-import Link from "next/link";
-import React, { JSX } from "react";
-import { BsBoxFill } from "react-icons/bs";
-import { FaGift } from "react-icons/fa6";
-import { IoExtensionPuzzle } from "react-icons/io5";
-import { RiFile2Fill } from "react-icons/ri";
-import { IoSettingsSharp } from "react-icons/io5";
+import React, { useEffect, useRef, useState } from "react";
 import Navbar from "./components/Navbar";
-import { usePathname } from "next/navigation";
-import { useIsClient } from "@/shared/hooks";
-
-const navitems = [
-   {
-      groupName: "Quick links",
-      list: [
-         { title: "Dashboard", path: "/admin/dashboard", icon: AiFillDashboard },
-         { title: "New Product", path: "/admin/products/create-product", icon: FaBucket },
-         { title: "New Coupon", path: "/admin/coupons/create-coupon", icon: RiCoupon3Fill },
-      ],
-   },
-   {
-      groupName: "Catalog",
-      list: [
-         { title: "Products", path: "/admin/products", icon: AiFillDashboard },
-         { title: "categories", path: "/admin/categories", icon: FaLink },
-         { title: "collections", path: "/admin/collections", icon: FaTag },
-         { title: "attributes", path: "/admin/attributes", icon: FaHashtag },
-      ],
-   },
-   {
-      groupName: "Sale",
-      list: [
-         { title: "orders", path: "/admin/orders", icon: BsBoxFill }, //
-      ],
-   },
-   {
-      groupName: "Customer",
-      list: [
-         { title: "Customers", path: "/admin/customers", icon: FaUserFriends }, //
-      ],
-   },
-   {
-      groupName: "Promotion",
-      list: [
-         { title: "coupons", path: "/admin/coupons", icon: FaGift }, //
-      ],
-   },
-   {
-      groupName: "cms",
-      list: [
-         { title: "pages", path: "/admin/cms-pages", icon: RiFile2Fill },
-         { title: "widgets", path: "/admin/widgets", icon: IoExtensionPuzzle },
-      ],
-   },
-];
+import { redirect, usePathname } from "next/navigation";
+import Footer from "./components/Footer";
+import { useAppDispatch, useAppSelector } from "@/libs/redux/hooks/hooks.redux";
+import { authAdminService } from "@/services/admin/admin-auth.service";
+import DashboadLinks from "./components/DashboadLinks";
+import Link from "next/link";
+import { IoSettingsSharp } from "react-icons/io5";
+import { Loading, OffCanvas } from "@/shared/components";
+import { useMediaQuery } from "@/shared/hooks";
 
 type Props = Readonly<{ children: React.ReactNode }>;
 export default function AdminLayout({ children }: Props) {
-   const isClient = useIsClient();
+   const offCanvasRef = useRef<any>(null);
    const pathname = usePathname();
-   if (!isClient) return null;
+   const dispatch = useAppDispatch();
+   const { session } = useAppSelector((state) => state.admin.auth);
+   const isToken = session.data?.accessToken || session.data?.refreshToken;
+   const screen = useMediaQuery();
+   const [hasMounted, setHasMounted] = useState(false);
+
+   useEffect(() => {
+      setHasMounted(true);
+   }, []);
+
+   useEffect(() => {
+      dispatch(authAdminService.adminSession.api());
+      return () => {};
+   }, []);
 
    if (pathname.includes("/auth")) {
       return children;
    }
+
+   if (session.isLoading || !hasMounted) {
+      return <Loading className="border-transparent h-screen text-4xl" />;
+   }
+
+   if (!isToken) {
+      return redirect("/admin/auth/login");
+   }
+
    return (
-      <main className="flex h-screen">
-         <Navbar />
-         <aside className="w-[250px] flex-shrink-0 bg-gray-50 h-full relative">
-            <div //
-               className="overflow-y-auto"
-               style={{ height: "calc(100vh - 61px)" }}>
-               <div className="h-[65px]" />
-               {navitems.map((nav, idx) => (
-                  <div key={`link-group-${idx}`} className="px-3">
-                     <span className="text-[11px] uppercase block my-[10px] font-medium">{nav.groupName}</span>
-                     <ul>
-                        {nav.list.map((item, idx) => (
-                           <React.Fragment key={`link-${idx}`}>
-                              <Item path={item.path} icon={<item.icon size={15} />} title={item.title} />
-                           </React.Fragment>
-                        ))}
-                     </ul>
-                  </div>
-               ))}
+      <main className="flex">
+         <Navbar offCanvasRef={offCanvasRef} />
+         <OffCanvas ref={offCanvasRef} isFragment={screen.md}>
+            <aside className="w-[240px] flex-shrink-0 bg-gray-50 h-screen relative">
+               <DashboadLinks offCanvasRef={offCanvasRef} />
+               <div className="p-3 bg-white w-full">
+                  <Link href="/admin/settings/store" className="flex items-center gap-3 ">
+                     <IoSettingsSharp /> <span className="text-[11px] uppercase block my-[10px] font-medium">Setting</span>
+                  </Link>
+               </div>
+            </aside>
+         </OffCanvas>
+         <div className="bg-[#f6f6f7fc] w-full">
+            <div className="h-screen overflow-y-auto pt-[65px]">
+               {children}
+               <Footer />
             </div>
-            <div className="p-3 bg-white w-full">
-               <Link href="/admin/setting/store" className="flex items-center gap-3 ">
-                  <IoSettingsSharp /> <span className="text-[11px] uppercase block my-[10px] font-medium">Setting</span>
-               </Link>
-            </div>
-         </aside>
-         <div className="bg-[#f6f6f7fc] h-full w-full overflow-y-auto">
-            <div className="h-[65px]" />
-            {children}
          </div>
       </main>
    );
 }
-
-type ItmeProps = {
-   icon: JSX.Element;
-   title: string;
-   path: string;
-};
-
-const Item = ({ icon, title, path }: ItmeProps) => {
-   const pathname = usePathname();
-   const isActivePath = pathname.includes(path) ? { background: "#edeeef" } : {};
-   return (
-      <li>
-         <Link style={isActivePath} className="flex items-center gap-3 rounded-[4px] py-[10px] px-2 hover:bg-[#edeeef]" href={path}>
-            {icon} <span className="text-[14px] font-semibold capitalize">{title}</span>
-         </Link>
-      </li>
-   );
-};
-
-const styles = {
-   navbar: {
-      boxShadow: "0 2px 2px -1px rgba(0, 0, 0, 0.15)",
-   },
-};

@@ -1,6 +1,6 @@
 import { Radio, Select, TextField } from "@/shared/ui";
 import { ErrorMessage, Field, FieldArray, FormikProps } from "formik";
-import React, { useEffect } from "react";
+import React from "react";
 import * as Yup from "yup";
 
 import { FaMinus } from "react-icons/fa";
@@ -233,7 +233,7 @@ export default function DiscountType({ formik }: Props) {
                                  </thead>
                                  <tbody>
                                     {list?.map((item: any, idx: number) => (
-                                       <tr>
+                                       <tr key={`23sgfr-${idx}`}>
                                           <td className="p-2">
                                              <SelectKeyAttributes //
                                                 selcted={item?.sku ? [item?.sku] : []}
