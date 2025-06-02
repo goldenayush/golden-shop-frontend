@@ -37,7 +37,6 @@ export default function SettingsLayout({ children }: Props) {
             <Card>
                {navigationLinks?.map((link, idx) => {
                   const hideHR = navigationLinks?.length - 1 === idx;
-
                   return (
                      <React.Fragment key={`setting-link-${idx}`}>
                         <div className="p-[20px]">

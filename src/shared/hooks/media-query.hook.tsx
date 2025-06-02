@@ -1,11 +1,9 @@
 import { useState, useEffect } from "react";
 function baseQuery(query: string) {
-   if (window && typeof window !== "undefined") {
-      if (window?.matchMedia) {
-         return window.matchMedia(query).matches;
-      } else {
-         return false;
-      }
+   if (window?.matchMedia) {
+      return window.matchMedia(query).matches;
+   } else {
+      return false;
    }
 }
 export type BreakPoint = {

@@ -19,23 +19,17 @@ export default function AdminLayout({ children }: Props) {
    const { session } = useAppSelector((state) => state.admin.auth);
    const isToken = session.data?.accessToken || session.data?.refreshToken;
    const screen = useMediaQuery();
-   const [hasMounted, setHasMounted] = useState(false);
-
-   useEffect(() => {
-      setHasMounted(true);
-   }, []);
 
    useEffect(() => {
       dispatch(authAdminService.adminSession.api());
       return () => {};
    }, []);
 
+   if (session.isLoading) {
+      return <Loading className="border-transparent h-screen text-4xl" />;
+   }
    if (pathname.includes("/auth")) {
       return children;
-   }
-
-   if (session.isLoading || !hasMounted) {
-      return <Loading className="border-transparent h-screen text-4xl" />;
    }
 
    if (!isToken) {
