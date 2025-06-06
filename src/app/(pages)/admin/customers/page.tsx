@@ -94,7 +94,6 @@ export default function CustomersPage() {
                      };
                   })}
                   onSort={(params) => {}}
-                  onPagination={(param) => console.log(param)}
                />
             </Card>
          </div>

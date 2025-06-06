@@ -126,7 +126,6 @@ export default function CouponsPage() {
                      };
                   })}
                   onSort={(params) => {}}
-                  onPagination={(param) => console.log(param)}
                />
             </Card>
          </div>

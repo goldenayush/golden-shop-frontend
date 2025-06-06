@@ -10,3 +10,4 @@ export { Loading } from "./Loading";
 export { OffCanvas } from "./OffCanvas";
 export { DataSetter } from "./DataSetter";
 export { Location } from "./Location";
+export { IsolationTemplate } from "./IsolationTemplate";

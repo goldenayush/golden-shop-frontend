@@ -81,7 +81,7 @@ export default function AttributesPage() {
                   pagination={{
                      currentPage: ctrl.pagination?.currentPage,
                      totalPages: ctrl.pagination?.totalPages,
-                     totalRecords: ctrl.pagination?.totalCount,
+                     totalRecords: ctrl.pagination?.totalRecords,
                      limit: ctrl.pagination?.limit,
                      onPagination(param: any) {
                         ctrl.setParam(param);

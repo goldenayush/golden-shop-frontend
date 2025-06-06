@@ -4,6 +4,7 @@ import { Select } from "../ui";
 import { useAppDispatch, useAppSelector } from "@/libs/redux/hooks/hooks.redux";
 import { placeLookupService } from "@/services/public/place-lookup.service";
 import { SelectProps } from "../ui/Select";
+import ReactSelect from "react-select";
 
 type Props = Omit<SelectProps, "options">;
 function Countries({ ...props }: Props) {
@@ -28,8 +29,8 @@ function Countries({ ...props }: Props) {
    );
 }
 
-type StateProps = Props & { countryCode: string };
-function States({ countryCode, ...props }: StateProps) {
+type StateProps = Props & { multi?: boolean; countryCode: string | null };
+function States({ multi, countryCode, ...props }: StateProps) {
    const dispatch = useAppDispatch();
    const { getStates } = useAppSelector((state) => state.public.placeLookup);
 
@@ -40,6 +41,25 @@ function States({ countryCode, ...props }: StateProps) {
 
    if (getStates.isLoading) {
       return "loading...";
+   }
+   if (multi) {
+      return (
+         <ReactSelect
+            isMulti={multi}
+            hideSelectedOptions
+            value={getStates?.data
+               ?.filter((option) => (props?.value as string[])?.includes(option.isoCode))
+               ?.map((group) => ({
+                  label: group?.name,
+                  value: group?.isoCode,
+               }))}
+            options={getStates.data.map((country) => ({
+               label: country.name,
+               value: country.isoCode,
+            }))}
+            onChange={props.onChange as any}
+         />
+      );
    }
    return (
       <Select

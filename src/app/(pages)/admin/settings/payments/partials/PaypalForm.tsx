@@ -1,6 +1,6 @@
 import React from "react";
 import GridDisplay from "../../../components/GridDisplay";
-import { Radio, Switch, TextField } from "@/shared/ui";
+import { Radio, Switch } from "@/shared/ui";
 import { Field, Formik, useFormikContext } from "formik";
 import { TextFieldFormik } from "@/libs/formik";
 

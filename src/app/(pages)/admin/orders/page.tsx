@@ -8,6 +8,7 @@ import { FaCaretUp, FaCircle, FaRegCircle } from "react-icons/fa";
 
 export default function OrdersPage() {
    const ctrl = useOrdersController();
+   console.log(ctrl.orders);
    return (
       <div className="p-7">
          <PageHeader heading="Orders" />
@@ -155,7 +156,6 @@ export default function OrdersPage() {
                onSort={(param) => {
                   console.log(param);
                }}
-               onPagination={() => {}}
             />
          </Card>
       </div>

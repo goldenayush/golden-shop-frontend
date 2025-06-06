@@ -5,6 +5,7 @@ import { Button, Checkbox, Select, TextField } from "../ui";
 import { useSearchParams, useRouter } from "next/navigation";
 import { HiOutlineChevronDoubleLeft } from "react-icons/hi";
 import { IoChevronBackSharp } from "react-icons/io5";
+import { IPagination } from "@/types/pagination.type";
 
 type Props = {
    loading?: boolean;
@@ -16,12 +17,7 @@ type Props = {
       label: string;
       sort?: boolean;
    }[];
-   onPagination?: (params: any) => void;
-   pagination?: {
-      currentPage: number;
-      totalPages: number;
-      totalRecords: number;
-      limit: number;
+   pagination?: IPagination & {
       onPagination(param: any): void;
    };
    checkEventList?: {
@@ -31,7 +27,7 @@ type Props = {
    }[];
 };
 
-function List({ dataList, colums, checkable, onSort, onPagination, pagination, checkEventList }: Props) {
+function List({ dataList, colums, checkable, onSort, pagination, checkEventList }: Props) {
    const router = useRouter();
    const searchParams = useSearchParams();
    const page = Number(searchParams.get("page")) || 0;
@@ -50,7 +46,7 @@ function List({ dataList, colums, checkable, onSort, onPagination, pagination, c
    };
    return (
       <div className="relative overflow-x-auto">
-         <table className="w-full text-sm text-left rtl:text-right">
+         <table className="w-full text-sm text-left rtl:text-right" suppressHydrationWarning={true}>
             <thead className="text-xs text-gray-700 uppercase">
                {checkable && (
                   <th scope="col" className="px-6 py-4 border-b border-gray-200">
@@ -146,7 +142,7 @@ function List({ dataList, colums, checkable, onSort, onPagination, pagination, c
                      </tr>
                   );
                })}
-               {pagination && (
+               {pagination?.currentPage && (
                   <tr className="border-b border-gray-200">
                      <th colSpan={7} scope="col" className="px-6 py-4 border-b border-gray-200">
                         <div className="flex items-center justify-between">
@@ -162,54 +158,56 @@ function List({ dataList, colums, checkable, onSort, onPagination, pagination, c
                                  <option value="25">25</option>
                               </select>
                            </div>
-                           <div className="flex items-center gap-2">
-                              {pagination?.currentPage > 1 && (
-                                 <React.Fragment>
-                                    <button //
-                                       className="border p-2 rounded-sm border-gray-200 cursor-pointer"
-                                       onClick={() => pagination?.onPagination({ page: 1 })}>
-                                       <HiOutlineChevronDoubleLeft color="#bcbdbe" />
-                                    </button>
-                                    <button //
-                                       className="border p-2 rounded-sm border-gray-200 cursor-pointer"
-                                       onClick={() => {
-                                          pagination?.onPagination({
-                                             page: pagination.currentPage - 1,
-                                          });
-                                       }}>
-                                       <IoChevronBackSharp color="#bcbdbe" />
-                                    </button>
-                                 </React.Fragment>
-                              )}
-                              <select //
-                                 className="w-[50px] p-[5px] border rounded-sm border-gray-200 text-sm font-normal text-center"
-                                 onChange={(e) => pagination?.onPagination({ page: e.target.value })}
-                                 defaultValue={pagination?.currentPage}>
-                                 {Array.from({ length: pagination?.totalPages }).map((_, idx) => (
-                                    <option value={idx + 1}>{idx + 1}</option>
-                                 ))}
-                              </select>
-                              {pagination.currentPage < pagination.totalPages && (
-                                 <React.Fragment>
-                                    <button
-                                       className="border p-2 rounded-sm border-gray-200 cursor-pointer rotate-[180deg]" //
-                                       onClick={() => {
-                                          pagination?.onPagination({
-                                             page: pagination.currentPage + 1,
-                                          });
-                                       }}>
-                                       <IoChevronBackSharp color="#bcbdbe" />
-                                    </button>
-                                    <button //
-                                       className="border p-2 rounded-sm border-gray-200 cursor-pointer rotate-[180deg]"
-                                       onClick={() => pagination?.onPagination({ page: pagination.totalPages })}>
-                                       <HiOutlineChevronDoubleLeft color="#bcbdbe" />
-                                    </button>
-                                 </React.Fragment>
-                              )}
+                           {pagination && (
+                              <div className="flex items-center gap-2">
+                                 {pagination?.currentPage > 1 && (
+                                    <React.Fragment>
+                                       <button //
+                                          className="border p-2 rounded-sm border-gray-200 cursor-pointer"
+                                          onClick={() => pagination?.onPagination({ page: 1 })}>
+                                          <HiOutlineChevronDoubleLeft color="#bcbdbe" />
+                                       </button>
+                                       <button //
+                                          className="border p-2 rounded-sm border-gray-200 cursor-pointer"
+                                          onClick={() => {
+                                             pagination?.onPagination({
+                                                page: (pagination?.currentPage as number) - 1,
+                                             });
+                                          }}>
+                                          <IoChevronBackSharp color="#bcbdbe" />
+                                       </button>
+                                    </React.Fragment>
+                                 )}
+                                 <select //
+                                    className="w-[50px] p-[5px] border rounded-sm border-gray-200 text-sm font-normal text-center"
+                                    onChange={(e) => pagination?.onPagination({ page: e.target.value })}
+                                    defaultValue={pagination?.currentPage}>
+                                    {Array.from({ length: pagination?.totalPages as number }).map((_, idx) => (
+                                       <option value={idx + 1}>{idx + 1}</option>
+                                    ))}
+                                 </select>
+                                 {pagination?.currentPage < (pagination?.totalPages as number) && (
+                                    <React.Fragment>
+                                       <button
+                                          className="border p-2 rounded-sm border-gray-200 cursor-pointer rotate-[180deg]" //
+                                          onClick={() => {
+                                             pagination?.onPagination({
+                                                page: (pagination?.currentPage as number) + 1,
+                                             });
+                                          }}>
+                                          <IoChevronBackSharp color="#bcbdbe" />
+                                       </button>
+                                       <button //
+                                          className="border p-2 rounded-sm border-gray-200 cursor-pointer rotate-[180deg]"
+                                          onClick={() => pagination?.onPagination({ page: pagination.totalPages })}>
+                                          <HiOutlineChevronDoubleLeft color="#bcbdbe" />
+                                       </button>
+                                    </React.Fragment>
+                                 )}
 
-                              <span className="text-sm font-normal">{pagination?.totalRecords} records</span>
-                           </div>
+                                 <span className="text-sm font-normal">{pagination?.totalRecords} records</span>
+                              </div>
+                           )}
                         </div>
                      </th>
                   </tr>
@@ -246,4 +244,3 @@ export function Table({ loading, ...props }: Props) {
    }
    return <List {...props} />;
 }
-

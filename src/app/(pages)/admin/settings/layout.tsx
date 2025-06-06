@@ -1,6 +1,10 @@
+"use client";
 import { Card } from "@/shared/components";
 import Link from "next/link";
 import React from "react";
+import { FaStore, FaTruck } from "react-icons/fa";
+import { MdCalculate } from "react-icons/md";
+import { RiListSettingsFill, RiSecurePaymentFill } from "react-icons/ri";
 
 const navigationLinks = [
    {
@@ -32,9 +36,31 @@ const navigationLinks = [
 type Props = Readonly<{ children: React.ReactNode }>;
 export default function SettingsLayout({ children }: Props) {
    return (
-      <div className="grid grid-cols-12 gap-3 py-[20px] px-[30px]">
+      <div className="grid grid-cols-12 gap-3 py-[20px] px-[15px] md:px-[30px]">
          <div className="col-span-12 lg:col-span-4">
-            <Card>
+            <div className="flex justify-around gap-2 bg-white p-3 rounded-md md:hidden">
+               <Link href="/admin/settings/store">
+                  <FaStore className="mx-auto" size={23} />
+                  <span className="text-[12px] text-center block">Store</span>
+               </Link>
+               <Link href="/admin/settings/payments">
+                  <RiSecurePaymentFill className="mx-auto" size={23} />
+                  <span className="text-[12px] text-center block">Payment</span>
+               </Link>
+               <Link href="/admin/settings/shipping">
+                  <FaTruck className="mx-auto" size={23} />
+                  <span className="text-[12px] text-center block">Shipping</span>
+               </Link>
+               <Link href="/admin/settings/shipping-api">
+                  <RiListSettingsFill className="mx-auto" size={23} />
+                  <span className="text-[12px] text-center block">Shipping API</span>
+               </Link>
+               <Link href="/admin/settings/tax">
+                  <MdCalculate className="mx-auto" size={23} />
+                  <span className="text-[12px] text-center block">Tax</span>
+               </Link>
+            </div>
+            <Card className="hidden md:block">
                {navigationLinks?.map((link, idx) => {
                   const hideHR = navigationLinks?.length - 1 === idx;
                   return (

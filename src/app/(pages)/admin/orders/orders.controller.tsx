@@ -1,3 +1,7 @@
+import { useAppDispatch, useAppSelector } from "@/libs/redux/hooks/hooks.redux";
+import { adminOrderService } from "@/services/admin/admin-order.service";
+import { useEffect } from "react";
+
 const orders = [
    {
       id: 1,
@@ -65,5 +69,13 @@ const orders = [
 ];
 
 export default function useOrdersController() {
-   return { orders };
+   const dispatch = useAppDispatch();
+   const { getAdminOrders } = useAppSelector((state) => state.admin.adminOrder);
+
+   useEffect(() => {
+      dispatch(adminOrderService.getAdminOrders.api());
+      return () => {};
+   }, []);
+
+   return { orders: getAdminOrders.data, isLoading: getAdminOrders.isLoading };
 }

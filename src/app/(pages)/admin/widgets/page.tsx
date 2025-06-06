@@ -124,7 +124,6 @@ export default function WidgetsPage() {
                      };
                   })}
                   onSort={(params) => {}}
-                  onPagination={(param) => console.log(param)}
                />
             </Card>
          </div>

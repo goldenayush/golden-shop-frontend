@@ -1,12 +1,13 @@
 import HttpInterceptor from "@/libs/interceptors/http.interceptor";
 import { ICollection } from "@/types/collection.type";
+import { IPagination } from "@/types/pagination.type";
 import { ActionReducerMapBuilder, createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
    getCollection: {
       isLoading: true,
       data: [] as ICollection[],
-      pagination: null as any,
+      pagination: null as null | IPagination,
    },
    createCollection: {
       isLoading: false,

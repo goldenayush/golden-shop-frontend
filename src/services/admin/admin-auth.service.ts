@@ -1,6 +1,6 @@
 import HttpInterceptor from "@/libs/interceptors/http.interceptor";
 import { deleteAdminTokens, getAdminTokens, setAdminTokens } from "@/server-actions/admin-tokens.action";
-import { IAdmin } from "@/types/admin.type";
+import { IAdminAuth } from "@/types/admin-auth.type";
 import { ActionReducerMapBuilder, createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
@@ -9,7 +9,7 @@ const initialState = {
       data: null as null | {
          accessToken?: string;
          refreshToken?: string;
-         user: IAdmin;
+         user: IAdminAuth;
       },
    },
    login: {

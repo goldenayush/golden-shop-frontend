@@ -1,0 +1,13 @@
+- dashboard api
+- for all list
+   pagination {  
+     currentPage: 1;
+     totalPages: 2;
+     totalRecords: 3;
+     limit: 4;
+   } and for sorting key name should sortBy sortOrder
+-  cms page apis
+-  widgets page apis
+-  universal search api
+-  coupons apis 
+-  admin customers apis

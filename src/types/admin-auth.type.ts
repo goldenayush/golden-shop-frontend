@@ -1,4 +1,4 @@
-export interface IAdmin {
+export interface IAdminAuth {
    id: string;
    email: string;
    full_name: string;

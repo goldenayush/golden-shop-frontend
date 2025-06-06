@@ -8,6 +8,9 @@ import { adminPaymentSettingReducer } from "./admin/admin-payment-setting.servic
 import { adminShippingSettingReducer } from "./admin/admin-shipping-setting.service";
 import { adminStoreSettingReducer } from "./admin/admin-store-setting.service";
 import { placeLookupReducer } from "./public/place-lookup.service";
+import { adminOrderReducer } from "./admin/admin-order.service";
+import { adminTaxSettingReducer } from "./admin/admin-tax-setting.service";
+import { adminCmsReducer } from "./admin/admin-cms.service";
 
 const rootReducer = combineReducers({
    admin: combineReducers({
@@ -19,6 +22,9 @@ const rootReducer = combineReducers({
       paymentSetting: adminPaymentSettingReducer,
       adminShippingSetting: adminShippingSettingReducer,
       adminStoreSetting: adminStoreSettingReducer,
+      adminOrder: adminOrderReducer,
+      adminTaxSetting: adminTaxSettingReducer,
+      adminCms: adminCmsReducer,
    }),
    // user: combineReducers({}),
    public: combineReducers({

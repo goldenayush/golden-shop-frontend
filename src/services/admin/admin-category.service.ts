@@ -1,5 +1,6 @@
 import HttpInterceptor from "@/libs/interceptors/http.interceptor";
 import { ICategory } from "@/types/category.type";
+import { IPagination } from "@/types/pagination.type";
 import { ActionReducerMapBuilder, createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
@@ -9,7 +10,7 @@ const initialState = {
    fetchCategories: {
       isLoading: true,
       data: [] as ICategory[],
-      pagination: null as any,
+      pagination: null as null | IPagination,
    },
    updateCategory: {
       isLoading: false,

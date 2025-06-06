@@ -24,6 +24,8 @@ export default function CmsPage() {
                      type="text"
                      className="border border-gray-300 rounded-sm text-[12px] px-3 py-1 placeholder:text-[12px] placeholder:font-semibold"
                      placeholder="Search"
+                     value={ctrl.debounce.searchKey}
+                     onChange={ctrl.debounce.onSearchChange}
                   />
                </div>
                <div>
@@ -33,30 +35,34 @@ export default function CmsPage() {
                </div>
             </div>
             <Table //
+               loading={ctrl.getCmsPages.isLoading}
                checkable
                checkEventList={[
                   {
+                     loading: ctrl.updateCmsPageStatus.isLoading,
                      label: "Disable",
-                     event: (param: any[]) => console.log(param), //
+                     event: (ids: string[]) => ctrl.onUpdateStatusCmsPage({ status: false, ids }), //
                   },
                   {
+                     loading: ctrl.updateCmsPageStatus.isLoading,
                      label: "Enable",
-                     event: (param: any[]) => console.log(param), //
+                     event: (ids: string[]) => ctrl.onUpdateStatusCmsPage({ status: true, ids }),
                   },
                   {
+                     loading: ctrl.deleteCmsPage.isLoading,
                      label: "Delete",
-                     event: (param: any[]) => console.log(param), //
+                     event: ctrl.onDeleteCmsPage, //
                   },
                ]}
                colums={[
                   { label: "Name", key: "name", sort: true }, //
                   { label: "Status", key: "status", sort: true },
                ]}
-               dataList={ctrl.pages?.map((data) => ({
+               dataList={ctrl.getCmsPages?.data?.map((data) => ({
                   id: data.id,
                   name: (
-                     <Link href={`/admin/cms-pages/${data?.id}`} className="text-[14px] font-semibold hover:underline">
-                        {data?.name}
+                     <Link href={`/admin/cms-pages/${data?.cmsPageDescription?.cmsPageId}`} className="text-[14px] font-semibold hover:underline">
+                        {data?.cmsPageDescription?.name || "N/A"}
                      </Link>
                   ),
                   status: (
@@ -70,9 +76,17 @@ export default function CmsPage() {
                   ),
                }))}
                onSort={(param) => {
-                  console.log(param);
+                  ctrl.setParam(param);
                }}
-               onPagination={() => {}}
+               pagination={{
+                  totalPages: ctrl.getCmsPages.pagination?.totalPages,
+                  currentPage: ctrl.getCmsPages.pagination?.currentPage,
+                  limit: ctrl.getCmsPages.pagination?.limit,
+                  totalRecords: ctrl.getCmsPages.pagination?.totalRecords,
+                  onPagination(param) {
+                     ctrl.setParam(param);
+                  },
+               }}
             />
          </Card>
       </div>

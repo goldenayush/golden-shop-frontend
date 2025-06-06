@@ -1,4 +1,5 @@
 import HttpInterceptor from "@/libs/interceptors/http.interceptor";
+import { IPagination } from "@/types/pagination.type";
 import { IProduct } from "@/types/product.type";
 import { ActionReducerMapBuilder, createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 
@@ -9,7 +10,7 @@ const initialState = {
    getProducts: {
       isLoading: true,
       data: [] as IProduct[],
-      pagination: null as any,
+      pagination: null as null | IPagination,
    },
    deleteProduct: {
       isLoading: false,

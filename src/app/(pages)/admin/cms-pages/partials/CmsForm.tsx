@@ -1,31 +1,53 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { TextareaFormik, TextFieldFormik } from "@/libs/formik";
 import { Card, Editor, PageHeader } from "@/shared/components";
 import { Button, Label, Switch } from "@/shared/ui";
 import { Field, Form, Formik } from "formik";
+import { ICmsPage } from "@/types/admin-cms.type";
 
-const fields = {
-   name: "about",
-   description: "<h1>description</h1>",
-   status: true,
-   seo: {
-      url_key: "/about",
-      url_title: "about url_title",
-      meta_keywords: "about keywords",
-      meta_description: "about description",
-   },
+type Props = {
+   loading?: boolean;
+   onSubmit: (values: any) => void;
+   patchValues?: ICmsPage;
 };
+export default function CmsForm({ loading, onSubmit, patchValues }: Props) {
+   const [fields, setFields] = useState({
+      name: "",
+      content: "",
+      status: false,
+      seo: {
+         urlKey: "",
+         metaTitle: "",
+         metaKeywords: "",
+         metaDescription: "",
+      },
+   });
 
-export default function CmsForm({ id }: { id?: string }) {
-   const [initialValues, setInitialValues] = useState(fields);
+   useEffect(() => {
+      if (patchValues) {
+         setFields({
+            id: patchValues.id,
+            name: patchValues?.cmsPageDescription?.name || "",
+            content: patchValues?.cmsPageDescription?.content || "",
+            status: patchValues.status,
+            seo: {
+               urlKey: patchValues?.cmsPageDescription?.urlKey || "",
+               metaTitle: patchValues?.cmsPageDescription?.metaTitle || "",
+               metaKeywords: patchValues?.cmsPageDescription?.metaKeywords || "",
+               metaDescription: patchValues?.cmsPageDescription?.metaDescription || "",
+            },
+         } as any);
+      }
+      return () => {};
+   }, [patchValues]);
+
    return (
-      <div className="p-7">
-         <PageHeader //
-            backLink="/admin/cms-pages"
-            heading={id ? "Editing [About]" : "Create a new page"}
-         />
-         <Formik initialValues={initialValues} onSubmit={(e) => console.log(e)}>
+      <>
+         <Formik //
+            enableReinitialize={Boolean(patchValues)}
+            initialValues={fields}
+            onSubmit={onSubmit}>
             {(formik) => {
                return (
                   <Form>
@@ -43,48 +65,44 @@ export default function CmsForm({ id }: { id?: string }) {
                            />
                         </div>
                         <div>
-                           <Label>Description</Label>
+                           <Label>content</Label>
                            <Editor //
-                              value={formik.values?.description}
+                              value={formik.values?.content}
                               setValue={(value) => {
-                                 formik.setFieldValue("description", value);
+                                 formik.setFieldValue("content", value);
                               }}
                            />
                         </div>
                      </Card>
                      <Card heading="Search engine optimize" className="p-4 mt-3">
                         <div className="mb-2">
-                           <TextFieldFormik name="seo.url_key" label="Url key" id="url_key" />
+                           <TextFieldFormik name="seo.urlKey" label="Url key" id="urlKey" />
                         </div>
                         <div className="mb-2">
-                           <TextFieldFormik name="seo.url_title" label="Meta title" id="url_title" />
+                           <TextFieldFormik name="seo.metaTitle" label="Meta title" id="metaTitle" />
                         </div>
                         <div className="mb-2">
-                           <TextFieldFormik name="seo.meta_keywords" label="Meta keywords" id="meta_keywords" />
+                           <TextFieldFormik name="seo.metaKeywords" label="Meta keywords" id="metaKeywords" />
                         </div>
                         <div className="mb-2">
-                           <TextareaFormik rows={4} name="seo.meta_description" label="Meta description" id="meta_description" />
+                           <TextareaFormik rows={4} name="seo.metaDescription" label="Meta content" id="metaDescription" />
                         </div>
                      </Card>
+                     <hr className="my-5 border-t-1 border-[#e1e3e5]" />
+                     <div className="flex justify-between items-center">
+                        {/* Cancel button  */}
+                        <Button type="reset" className="border-2 border-[#d72c0d] py-2 px-4 text-[#d72c0d] text-[14px] rounded-sm font-semibold cursor-pointer">
+                           Cancel
+                        </Button>
+                        {/* Save button  */}
+                        <Button type="submit" className="bg-[#008060] text-white py-2 px-4 rounded-sm text-[14px] font-semibold cursor-pointer" loading={loading}>
+                           Save
+                        </Button>
+                     </div>
                   </Form>
                );
             }}
          </Formik>
-         <hr className="my-5 border-t-1 border-[#e1e3e5]" />
-         <div className="flex justify-between items-center">
-            {/* Cancel button  */}
-            <div>
-               <Button type="reset" className="border-2 border-[#d72c0d] py-2 px-4 text-[#d72c0d] text-[14px] rounded-sm font-semibold cursor-pointer">
-                  Cancel
-               </Button>
-            </div>
-            {/* Save button  */}
-            <div>
-               <Button type="submit" className="bg-[#008060] text-white py-2 px-4 rounded-sm text-[14px] font-semibold cursor-pointer">
-                  Save
-               </Button>
-            </div>
-         </div>
-      </div>
+      </>
    );
 }

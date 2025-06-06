@@ -28,6 +28,7 @@ export default function AdminLayout({ children }: Props) {
    if (session.isLoading) {
       return <Loading className="border-transparent h-screen text-4xl" />;
    }
+
    if (pathname.includes("/auth")) {
       return children;
    }

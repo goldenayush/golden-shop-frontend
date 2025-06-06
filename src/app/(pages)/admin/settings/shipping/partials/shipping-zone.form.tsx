@@ -1,81 +1,95 @@
-import { Card } from "@/shared/components";
-import { Label, TextField } from "@/shared/ui";
-import React from "react";
-import Select from "react-select";
+import { TextFieldFormik } from "@/libs/formik";
+import { Card, Location, Modal } from "@/shared/components";
+import { Button, Label, TextField } from "@/shared/ui";
+import { IShippingZone } from "@/types/shipping-zone.type";
+import { Field, Form, Formik } from "formik";
+import React, { useEffect, useRef, useState } from "react";
+import * as Yup from "yup";
 
 type Props = {
-   onClose?: () => void;
+   onSubmit: (body: any, cd: () => void) => void;
+   patchValue?: IShippingZone;
+   loading?: boolean;
+   Component: React.ComponentType<React.DetailedHTMLProps<React.ButtonHTMLAttributes<HTMLButtonElement>, HTMLButtonElement>>;
 };
-export default function ShippingZoneForm({ onClose }: Props) {
+export default function ShippingZoneForm({ loading, patchValue, onSubmit, Component }: Props) {
+   const modalRef = useRef<any>(null);
+   const [fields, setFields] = useState({
+      name: "",
+      country: "",
+      shippingZoneProvince: [] as string[],
+   });
+
+   useEffect(() => {
+      if (patchValue) {
+         const province = patchValue.shippingZoneProvince;
+         setFields({
+            id: patchValue.id,
+            name: patchValue.name,
+            country: patchValue.country,
+            shippingZoneProvince: province.map((s) => s.province.split("-")[1]),
+         } as any);
+      }
+      return () => {};
+   }, [patchValue]);
+
    return (
-      <Card heading="Create a shipping zone" className="p-4">
-         <div className="py-5">
-            <TextField //
-               label={<span className="text-[12px] uppercase font-semibold block mb-3">Zone name</span>}
-               placeholder="Enter zone name"
-            />
-         </div>
-         <hr className="border-t border-gray-200 block" />
-         <div className="py-5">
-            <span className="text-[12px] uppercase font-semibold block mb-3">Country</span>
-            <Select
-               hideSelectedOptions
-               options={[
-                  { label: "india", value: "india" }, //
-                  { label: "egypt", value: "egypt" },
-               ]}
-            />
-         </div>
-         <hr className="border-t border-gray-200 block" />
-         <div className="py-5">
-            <span className="text-[12px] uppercase font-semibold block mb-3">Provinces/States</span>
-            <Select
-               isMulti
-               hideSelectedOptions
-               options={[
-                  { label: "Andhra Pradesh", value: "Andhra Pradesh" },
-                  { label: "Arunachal Pradesh", value: "Arunachal Pradesh" },
-                  { label: "Assam", value: "Assam" },
-                  { label: "Bihar", value: "Bihar" },
-                  { label: "Chhattisgarh", value: "Chhattisgarh" },
-                  { label: "Goa", value: "Goa" },
-                  { label: "Gujarat", value: "Gujarat" },
-                  { label: "Haryana", value: "Haryana" },
-                  { label: "Himachal Pradesh", value: "Himachal Pradesh" },
-                  { label: "Jharkhand", value: "Jharkhand" },
-                  { label: "Karnataka", value: "Karnataka" },
-                  { label: "Kerala", value: "Kerala" },
-                  { label: "Madhya Pradesh", value: "Madhya Pradesh" },
-                  { label: "Maharashtra", value: "Maharashtra" },
-                  { label: "Manipur", value: "Manipur" },
-                  { label: "Meghalaya", value: "Meghalaya" },
-                  { label: "Mizoram", value: "Mizoram" },
-                  { label: "Nagaland", value: "Nagaland" },
-                  { label: "Odisha", value: "Odisha" },
-                  { label: "Punjab", value: "Punjab" },
-                  { label: "Rajasthan", value: "Rajasthan" },
-                  { label: "Sikkim", value: "Sikkim" },
-                  { label: "Tamil Nadu", value: "Tamil Nadu" },
-                  { label: "Telangana", value: "Telangana" },
-                  { label: "Tripura", value: "Tripura" },
-                  { label: "Uttar Pradesh", value: "Uttar Pradesh" },
-                  { label: "Uttarakhand", value: "Uttarakhand" },
-                  { label: "West Bengal", value: "West Bengal" },
-               ]}
-               onChange={(param) => {
-                  console.log(param);
-               }}
-            />
-         </div>
-         <hr className="border-t border-gray-200 block" />
-         <div className="mt-5 flex justify-end gap-2">
-            <button type="button" onClick={onClose} className="bg-white py-2 px-4 rounded-sm text-[14px] font-semibold cursor-pointer border border-gray-300">
-               Cancel
-            </button>
-            <button type="button" className="bg-[#008060] text-white py-2 px-4 rounded-sm text-[14px] font-semibold cursor-pointer">
-               Save
-            </button>
-         </div>
-      </Card>
+      <>
+         <Component onClick={() => modalRef.current.setIsOpen(true)} />
+         <Modal size="lg" ref={modalRef}>
+            <Formik //
+               enableReinitialize={Boolean(patchValue)}
+               initialValues={fields}
+               validationSchema={Yup.object().shape({
+                  name: Yup.string().required("This field can not be empty"),
+               })}
+               onSubmit={(e) => onSubmit(e, () => modalRef.current.setIsOpen(false))}>
+               {(formik) => (
+                  <Form>
+                     <Card heading="Create a shipping zone" className="p-4">
+                        <div className="py-5">
+                           <TextFieldFormik //
+                              label={<span className="text-[12px] uppercase font-semibold block mb-3">Zone name</span>}
+                              placeholder="Enter zone name"
+                              name="name"
+                           />
+                        </div>
+                        <hr className="border-t border-gray-200 block" />
+                        <div className="py-5">
+                           <span className="text-[12px] uppercase font-semibold block mb-3">Country</span>
+                           <Field as={Location.Countries} name="country" />
+                        </div>
+                        <hr className="border-t border-gray-200 block" />
+                        <div className="py-5">
+                           <span className="text-[12px] uppercase font-semibold block mb-3">Provinces/States</span>
+                           <Field //
+                              as={Location.States}
+                              multi
+                              countryCode={formik.values.country}
+                              onChange={(values: any[]) => {
+                                 const codes = values?.map((ele) => ele.value);
+                                 formik.setFieldValue("shippingZoneProvince", codes);
+                              }}
+                              value={formik?.values?.shippingZoneProvince || []}
+                           />
+                        </div>
+                        <hr className="border-t border-gray-200 block" />
+                        <div className="mt-5 flex justify-end gap-2">
+                           <button
+                              type="button"
+                              onClick={() => modalRef.current.setIsOpen(false)}
+                              className="bg-white py-2 px-4 rounded-sm text-[14px] font-semibold cursor-pointer border border-gray-300">
+                              Cancel
+                           </button>
+                           <Button type="submit" className="bg-[#008060] text-white py-2 px-4 rounded-sm text-[14px] font-semibold cursor-pointer" loading={loading}>
+                              Save
+                           </Button>
+                        </div>
+                     </Card>
+                  </Form>
+               )}
+            </Formik>
+         </Modal>
+      </>
    );
 }

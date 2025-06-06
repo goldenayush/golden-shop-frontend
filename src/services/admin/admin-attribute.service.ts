@@ -1,5 +1,6 @@
 import HttpInterceptor from "@/libs/interceptors/http.interceptor";
 import { IAttributeGroup, IAttribute } from "@/types/attribute.types";
+import { IPagination } from "@/types/pagination.type";
 import { ActionReducerMapBuilder, createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
@@ -16,7 +17,7 @@ const initialState = {
    getAllAttribute: {
       isLoading: true,
       data: [] as IAttribute[],
-      pagination: null as any,
+      pagination: null as null | IPagination,
    },
    getSingleAttribute: {
       isLoading: true,
