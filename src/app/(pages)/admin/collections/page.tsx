@@ -60,9 +60,9 @@ export default function CollectionsPage() {
                      ctrl.setParam(param);
                   }}
                   pagination={{
-                     currentPage: 1,
+                     page: 1,
                      totalPages: 1,
-                     totalRecords: 1,
+                     total: 1,
                      limit: 1,
                      onPagination(param) {
                         ctrl.setParam(param);

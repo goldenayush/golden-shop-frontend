@@ -115,7 +115,12 @@ export default function AdminProductsPage() {
                         id: data.id,
                         singleImage: (
                            <div className="border border-[#e1e3e5] rounded-[3px] w-[60px] p-1">
-                              <img src={data?.productImages?.[0]?.listingImage} alt="img" className="w-full" />
+                              <img //
+                                 crossOrigin="anonymous"
+                                 src={data?.productImages?.[0]?.listingImage}
+                                 alt="img"
+                                 className="w-full"
+                              />
                            </div>
                         ),
                         name: (
@@ -139,9 +144,9 @@ export default function AdminProductsPage() {
                   })}
                   onSort={(params) => ctrl.setParam(params)}
                   pagination={{
-                     currentPage: 1,
+                     page: 1,
                      totalPages: 3,
-                     totalRecords: 112,
+                     total: 112,
                      limit: 12,
                      onPagination(param) {
                         ctrl.setParam(param);

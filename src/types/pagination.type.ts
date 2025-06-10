@@ -1,6 +1,6 @@
 export interface IPagination {
-   currentPage?: number;
+   total?: number;
+   page?: number;
    totalPages?: number;
-   totalRecords?: number;
    limit?: number;
 }

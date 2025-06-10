@@ -11,6 +11,7 @@ import { placeLookupReducer } from "./public/place-lookup.service";
 import { adminOrderReducer } from "./admin/admin-order.service";
 import { adminTaxSettingReducer } from "./admin/admin-tax-setting.service";
 import { adminCmsReducer } from "./admin/admin-cms.service";
+import { adminCustomerReducer } from "./admin/admin-customer.service";
 
 const rootReducer = combineReducers({
    admin: combineReducers({
@@ -25,6 +26,7 @@ const rootReducer = combineReducers({
       adminOrder: adminOrderReducer,
       adminTaxSetting: adminTaxSettingReducer,
       adminCms: adminCmsReducer,
+      adminCustomer: adminCustomerReducer,
    }),
    // user: combineReducers({}),
    public: combineReducers({

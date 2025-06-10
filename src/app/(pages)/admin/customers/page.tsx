@@ -21,12 +21,14 @@ export default function CustomersPage() {
                         type="text"
                         className="border border-gray-300 rounded-sm text-[12px] px-3 py-1 placeholder:text-[12px] placeholder:font-semibold"
                         placeholder="Search"
+                        value={ctrl.debounce.searchKey}
+                        onChange={ctrl.debounce.onSearchChange}
                      />
                      <div>
                         <Dropdown //
                            options={[
-                              { value: "1", label: "enabled" }, //
-                              { value: "0", label: "disabled" }, //
+                              { value: "true", label: "enabled" }, //
+                              { value: "false", label: "disabled" }, //
                            ]}
                            Component={(props) => (
                               <span className="flex items-center gap-2 border-b px-2 border-gray-300">
@@ -41,7 +43,7 @@ export default function CustomersPage() {
                                  {/*  */}
                               </span>
                            )}
-                           onChange={(value) => {}}
+                           onChange={(value) => ctrl.setParam({ status: value })}
                         />
                      </div>
                   </div>
@@ -54,46 +56,63 @@ export default function CustomersPage() {
 
                {/*--------------table--------------------*/}
                <Table
+                  loading={ctrl.getCustomers.isLoading}
                   checkable
                   checkEventList={[
                      {
+                        loading: ctrl.updateCustomerStatus.isLoading,
                         label: "Disable",
-                        event: (params) => console.log(params), //
+                        event: (ids: string[]) => ctrl.onUpdateCustomerStatus({ status: false, ids }), //
                      },
                      {
+                        loading: ctrl.updateCustomerStatus.isLoading,
                         label: "Enable",
-                        event: (params) => console.log(params), //
+                        event: (ids: string[]) => ctrl.onUpdateCustomerStatus({ status: true, ids }),
                      },
                   ]}
                   colums={[
-                     { key: "fullname", label: "Full Name", sort: true }, //
+                     { key: "fullName", label: "Full Name", sort: true }, //
                      { key: "email", label: "Email", sort: true },
                      { key: "status", label: "Status" },
-                     { key: "created_at", label: "Created At", sort: true },
+                     { key: "createdAt", label: "Created At", sort: true },
                   ]}
-                  dataList={ctrl.customers?.map((data) => {
+                  dataList={ctrl.getCustomers?.data?.map((data) => {
                      return {
                         id: data.id,
-                        fullname: (
+                        fullName: (
                            <Link href={`/admin/customers/${data?.id}`} className="text-[14px] font-semibold hover:underline">
-                              {data?.fullname}
+                              {data?.fullName || "N/A"}
                            </Link>
                         ),
                         email: <span className="text-[14px]">{data?.email}</span>,
 
                         status: (
                            <span className="text-[14px]">
-                              {data?.status === 1 ? ( //
+                              {data?.status ? ( //
                                  <GoDotFill size={20} color="#aee9d1" />
                               ) : (
                                  <GoDotFill size={20} color="#cecece" />
                               )}
                            </span>
                         ),
-                        created_at: <span className="text-[14px]">{data?.created_at.toLocaleDateString("en-US", { year: "numeric", month: "short", day: "numeric" })}</span>,
+                        createdAt: (
+                           <span className="text-[14px]">
+                              {/*  */}
+                              {new Date(data?.createdAt)?.toLocaleDateString("en-US", { year: "numeric", month: "short", day: "numeric" })}
+                           </span>
+                        ),
                      };
                   })}
-                  onSort={(params) => {}}
+                  onSort={(params) => ctrl.setParam(params)}
+                  pagination={{
+                     totalPages: ctrl.getCustomers?.pagination?.totalPages,
+                     page: ctrl.getCustomers?.pagination?.page,
+                     limit: ctrl.getCustomers?.pagination?.limit,
+                     total: ctrl.getCustomers?.pagination?.total,
+                     onPagination(page) {
+                        ctrl.setParam(page);
+                     },
+                  }}
                />
             </Card>
          </div>

@@ -10,7 +10,6 @@ export function useFileUpload({ multi }: Props) {
 
    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
       if (e.target.files) {
-         console.log(Array.from(e.target.files));
          if (multi) {
             setFiles([...files, ...Array.from(e.target.files)]);
             setError(null);
@@ -24,6 +23,11 @@ export function useFileUpload({ multi }: Props) {
    const deleteFile = (i: number) => {
       setFiles(files.filter((_, idx) => idx !== i));
    };
+
+   const deleteAll = () => {
+      setFiles([]);
+   };
+
    const uploadFiles = () => {
       console.log(files);
    };
@@ -34,5 +38,6 @@ export function useFileUpload({ multi }: Props) {
       handleFileChange,
       deleteFile,
       uploadFiles,
+      deleteAll,
    };
 }

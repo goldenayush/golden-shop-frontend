@@ -1,7 +1,8 @@
 import { useAppDispatch, useAppSelector } from "@/libs/redux/hooks/hooks.redux";
+import { adminFileUploadService } from "@/services/admin/admin-file-upload.service";
 import { adminProductService } from "@/services/admin/admin-product.service";
 import { useParams, useRouter } from "next/navigation";
-import React, { useEffect } from "react";
+import React, { useEffect, useRef } from "react";
 
 export default function singleProductController() {
    const dispatch = useAppDispatch();
@@ -11,24 +12,7 @@ export default function singleProductController() {
 
    const onSubmit = async (body: any) => {
       try {
-         const { description, inventory, images, id, ...rest } = body;
-         const payload = {
-            id,
-            ...rest,
-            productDescription: {
-               ...description,
-               productId: pid,
-               id,
-            },
-            productImages: images,
-            productInventory: {
-               ...inventory,
-               productId: pid,
-               id,
-            },
-         };
-         await dispatch(adminProductService.updateProduct.api(payload)).unwrap();
-         router.replace("/admin/products");
+         await dispatch(adminProductService.updateProduct.api(body)).unwrap();
       } catch (error) {
          return;
       }

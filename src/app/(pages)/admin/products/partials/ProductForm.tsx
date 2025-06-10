@@ -2,33 +2,35 @@
 import { Card, Editor } from "@/shared/components";
 import { Button, Label, Radio, Select } from "@/shared/ui";
 import React, { JSX, useEffect, useState } from "react";
-import { FaCamera } from "react-icons/fa6";
-import { RiDeleteBin6Line } from "react-icons/ri";
 import { Field, Form, Formik } from "formik";
-import { useFileUpload } from "@/shared/hooks";
 import * as Yup from "yup";
 import { TextFieldFormik } from "@/libs/formik";
 import SelectAttributeGroup from "./SelectAttributeGroup";
 import CategorySelector from "./CategorySelector";
+import ProductVariant from "./ProductVariant";
+import { IProduct } from "@/types/product.type";
+import UploadGrid from "../../components/UploadGrid";
 
 type Props = {
    onSubmit: (body: any) => void;
    loading?: boolean;
-   patchValues?: any;
+   patchValues?: IProduct;
 };
+
 export default function ProductForm({ onSubmit, loading, patchValues }: Props) {
-   const { files, handleFileChange, deleteFile } = useFileUpload({ multi: true });
+   const [images, setImages] = useState<any[]>([]);
+
    const [fields, setFields] = useState({
       type: "",
       visibility: "1",
-      sku: "", //validate
-      price: null, //validate
-      weight: null, //validate
+      sku: "",
+      price: null,
+      weight: null,
       status: "1",
       categoryId: "",
       groupId: "",
       productDescription: {
-         name: "", //validate
+         name: "",
          description: "",
          urlKey: "", //validate
          metaTitle: "",
@@ -41,17 +43,10 @@ export default function ProductForm({ onSubmit, loading, patchValues }: Props) {
          stockAvailability: "1",
          qty: null, //validate
       },
-      productImages: [
-         {
-            originImage: "http://admin.mrvcreations.in/assets/catalog/6935/6426/acceseries39-thumb.png",
-            thumbImage: "http://admin.mrvcreations.in/assets/catalog/6935/6426/acceseries39-thumb.png",
-            listingImage: "http://admin.mrvcreations.in/assets/catalog/6935/6426/acceseries39-thumb.png",
-            singleImage: "http://admin.mrvcreations.in/assets/catalog/6935/6426/acceseries39-thumb.png",
-            isMain: true,
-         },
-      ],
       ProductAttributeValueIndex: [],
+      productImages: [],
    });
+
    const submit = (body: typeof fields) => {
       const { visibility, status, productInventory, ...rest } = body;
       const paylaod = {
@@ -63,6 +58,12 @@ export default function ProductForm({ onSubmit, loading, patchValues }: Props) {
             manageStock: !!+productInventory.manageStock,
             stockAvailability: !!+productInventory.stockAvailability,
          },
+         productImages: images.map((item: any) => {
+            const { src, id, ...data } = item;
+            return {
+               ...data,
+            };
+         }),
       };
       onSubmit(paylaod);
    };
@@ -85,7 +86,6 @@ export default function ProductForm({ onSubmit, loading, patchValues }: Props) {
                stockAvailability: String(+patchValues?.productInventory?.stockAvailability),
                qty: patchValues?.productInventory?.qty,
             },
-            productImages: patchValues?.productImages || [],
             ProductAttributeValueIndex: patchValues?.ProductAttributeValueIndex || [],
          } as any);
       }
@@ -159,31 +159,15 @@ export default function ProductForm({ onSubmit, loading, patchValues }: Props) {
                         </Card>
                         {/* Media */}
                         <Card className="p-4 mt-3" heading="Media">
-                           <div className="grid grid-cols-12 gap-3">
-                              {files?.map((item, idx) => {
-                                 return (
-                                    <div key={`file-${idx}`} className="col-span-4 border-1 border-[#e1e1e1] relative">
-                                       <RiDeleteBin6Line //
-                                          color="#d72c0d"
-                                          size={20}
-                                          className="absolute top-2 right-2 cursor-pointer"
-                                          onClick={() => deleteFile(idx)}
-                                       />
-                                       <img src={URL.createObjectURL(item)} alt="img" className="w-full block object-cover h-[200px]" />
-                                    </div>
-                                 );
-                              })}
-                              <label htmlFor="mediaUpload" className="col-span-4 border-[2px] border-[#e1e1e1] border-dashed p-5 flex justify-center items-center min-h-[200px] cursor-pointer">
-                                 <input //
-                                    type="file"
-                                    id="mediaUpload"
-                                    onChange={handleFileChange}
-                                    multiple
-                                    hidden
-                                 />
-                                 <FaCamera size={24} color="#058c8c" />
-                              </label>
-                           </div>
+                           <UploadGrid //
+                              initialImages={
+                                 patchValues?.productImages?.map((data) => ({
+                                    ...data,
+                                    src: data.originImage,
+                                 })) || []
+                              }
+                              getData={(imgs) => setImages(imgs)}
+                           />
                         </Card>
                         {/* Search engine optimize */}
                         <Card className="p-4 mt-3" heading="Search engine optimize">
@@ -204,6 +188,7 @@ export default function ProductForm({ onSubmit, loading, patchValues }: Props) {
                               <TextFieldFormik label="Meta description" id="metaDescription" name="productDescription.metaDescription" className="h-[100px]" />
                            </div>
                         </Card>
+                        {Boolean(patchValues) && <ProductVariant />}
                      </div>
                      <div className="col-span-12 lg:col-span-4">
                         {/* Product status */}

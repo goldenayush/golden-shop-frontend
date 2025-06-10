@@ -83,9 +83,9 @@ export default function CategoriesPage() {
                      ctrl.setParam(param);
                   }}
                   pagination={{
-                     currentPage: ctrl?.fetchCategories?.pagination?.currentPage,
+                     page: ctrl?.fetchCategories?.pagination?.page,
                      totalPages: 4,
-                     totalRecords: 20,
+                     total: 20,
                      limit: ctrl?.fetchCategories?.pagination?.limit,
                      onPagination(param) {
                         ctrl.setParam(param);

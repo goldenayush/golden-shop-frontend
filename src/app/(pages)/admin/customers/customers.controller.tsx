@@ -1,41 +1,42 @@
-const customers = [
-   {
-      id: 1,
-      fullname: "Alice Johnson",
-      email: "alice.johnson@example.com",
-      status: 1, // active
-      created_at: new Date("2024-11-15T10:30:00Z"),
-   },
-   {
-      id: 2,
-      fullname: "Bob Smith",
-      email: "bob.smith@example.com",
-      status: 0, // inactive
-      created_at: new Date("2024-12-01T14:45:00Z"),
-   },
-   {
-      id: 3,
-      fullname: "Carlos Diaz",
-      email: "carlos.diaz@example.com",
-      status: 1,
-      created_at: new Date("2025-01-10T09:00:00Z"),
-   },
-   {
-      id: 4,
-      fullname: "Diana Lee",
-      email: "diana.lee@example.com",
-      status: 1,
-      created_at: new Date("2025-03-20T16:15:00Z"),
-   },
-   {
-      id: 5,
-      fullname: "Edward Kim",
-      email: "edward.kim@example.com",
-      status: 0,
-      created_at: new Date("2025-04-05T12:00:00Z"),
-   },
-];
+import { useAppDispatch, useAppSelector } from "@/libs/redux/hooks/hooks.redux";
+import { adminCustomerService } from "@/services/admin/admin-customer.service";
+import { useDebounce } from "@/shared/hooks";
+import { useRouter, useSearchParams } from "next/navigation";
+import { useEffect } from "react";
 
 export default function useCustomersController() {
-   return { customers };
+   const dispatch = useAppDispatch();
+   const { getCustomers, updateCustomerStatus } = useAppSelector((state) => state.admin.adminCustomer);
+   const searchParams = useSearchParams();
+   const router = useRouter();
+   const debounce = useDebounce({
+      time: 1000,
+      callback(value) {
+         dispatch(adminCustomerService.getCustomers.api(`search=${value}`));
+      },
+   });
+
+   const setParam = (queryObj: any) => {
+      const params = new URLSearchParams(searchParams.toString());
+      for (const key in queryObj) {
+         params.set(key, queryObj[key]);
+      }
+      router.push("?" + params.toString());
+   };
+
+   const onUpdateCustomerStatus = async (body: { ids: string[]; status: boolean }) => {
+      try {
+         await dispatch(adminCustomerService.updateCustomerStatus.api(body)).unwrap();
+         dispatch(adminCustomerService.getCustomers.api(searchParams.toString()));
+      } catch (error) {
+         return;
+      }
+   };
+
+   useEffect(() => {
+      dispatch(adminCustomerService.getCustomers.api(searchParams.toString()));
+      return () => {};
+   }, [searchParams]);
+
+   return { getCustomers, setParam, debounce, onUpdateCustomerStatus, updateCustomerStatus };
 }

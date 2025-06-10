@@ -80,9 +80,9 @@ export default function CmsPage() {
                }}
                pagination={{
                   totalPages: ctrl.getCmsPages.pagination?.totalPages,
-                  currentPage: ctrl.getCmsPages.pagination?.currentPage,
+                  page: ctrl.getCmsPages.pagination?.page,
                   limit: ctrl.getCmsPages.pagination?.limit,
-                  totalRecords: ctrl.getCmsPages.pagination?.totalRecords,
+                  total: ctrl.getCmsPages.pagination?.total,
                   onPagination(param) {
                      ctrl.setParam(param);
                   },

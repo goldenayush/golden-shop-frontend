@@ -130,7 +130,7 @@ class AdminAttributeService extends HttpInterceptor {
       },
    };
    getAllAttribute = {
-      api: createAsyncThunk("!getAllAttribute", async (query: string, thunkAPI) => {
+      api: createAsyncThunk("!getAllAttribute", async (query: string | undefined, thunkAPI) => {
          try {
             const queryString = query ? "?" + query : "";
             const { data } = await this.admin.get(`/admin/attributes/all${queryString}`);
@@ -186,7 +186,7 @@ class AdminAttributeService extends HttpInterceptor {
                id: body?.attributeGroupId,
                name: body?.name,
             });
-            thunkAPI.dispatch(this.getAllAttribute.api(""));
+            thunkAPI.dispatch(this.getAllAttribute.api());
             return data;
          } catch (error) {
             return thunkAPI.rejectWithValue(this.errorMessage(error));
@@ -211,7 +211,7 @@ class AdminAttributeService extends HttpInterceptor {
             const { data } = await this.admin.delete("/admin/attributes/multiple", {
                data: { ids },
             });
-            thunkAPI.dispatch(this.getAllAttribute.api(""));
+            thunkAPI.dispatch(this.getAllAttribute.api());
             return data;
          } catch (error) {
             return thunkAPI.rejectWithValue(this.errorMessage(error));

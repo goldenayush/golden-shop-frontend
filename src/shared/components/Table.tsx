@@ -142,7 +142,7 @@ function List({ dataList, colums, checkable, onSort, pagination, checkEventList 
                      </tr>
                   );
                })}
-               {pagination?.currentPage && (
+               {pagination?.page && (
                   <tr className="border-b border-gray-200">
                      <th colSpan={7} scope="col" className="px-6 py-4 border-b border-gray-200">
                         <div className="flex items-center justify-between">
@@ -160,7 +160,7 @@ function List({ dataList, colums, checkable, onSort, pagination, checkEventList 
                            </div>
                            {pagination && (
                               <div className="flex items-center gap-2">
-                                 {pagination?.currentPage > 1 && (
+                                 {pagination?.page > 1 && (
                                     <React.Fragment>
                                        <button //
                                           className="border p-2 rounded-sm border-gray-200 cursor-pointer"
@@ -171,7 +171,7 @@ function List({ dataList, colums, checkable, onSort, pagination, checkEventList 
                                           className="border p-2 rounded-sm border-gray-200 cursor-pointer"
                                           onClick={() => {
                                              pagination?.onPagination({
-                                                page: (pagination?.currentPage as number) - 1,
+                                                page: (pagination?.page as number) - 1,
                                              });
                                           }}>
                                           <IoChevronBackSharp color="#bcbdbe" />
@@ -181,18 +181,18 @@ function List({ dataList, colums, checkable, onSort, pagination, checkEventList 
                                  <select //
                                     className="w-[50px] p-[5px] border rounded-sm border-gray-200 text-sm font-normal text-center"
                                     onChange={(e) => pagination?.onPagination({ page: e.target.value })}
-                                    defaultValue={pagination?.currentPage}>
+                                    defaultValue={pagination?.page}>
                                     {Array.from({ length: pagination?.totalPages as number }).map((_, idx) => (
                                        <option value={idx + 1}>{idx + 1}</option>
                                     ))}
                                  </select>
-                                 {pagination?.currentPage < (pagination?.totalPages as number) && (
+                                 {pagination?.page < (pagination?.totalPages as number) && (
                                     <React.Fragment>
                                        <button
                                           className="border p-2 rounded-sm border-gray-200 cursor-pointer rotate-[180deg]" //
                                           onClick={() => {
                                              pagination?.onPagination({
-                                                page: (pagination?.currentPage as number) + 1,
+                                                page: (pagination?.page as number) + 1,
                                              });
                                           }}>
                                           <IoChevronBackSharp color="#bcbdbe" />
@@ -204,8 +204,7 @@ function List({ dataList, colums, checkable, onSort, pagination, checkEventList 
                                        </button>
                                     </React.Fragment>
                                  )}
-
-                                 <span className="text-sm font-normal">{pagination?.totalRecords} records</span>
+                                 <span className="text-sm font-normal">{pagination?.total} records</span>
                               </div>
                            )}
                         </div>
