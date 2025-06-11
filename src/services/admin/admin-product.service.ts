@@ -1,7 +1,7 @@
 import HttpInterceptor from "@/libs/interceptors/http.interceptor";
 import { IPagination } from "@/types/pagination.type";
 import { IProduct } from "@/types/product.type";
-import { ActionReducerMapBuilder, createAsyncThunk, createSlice, GetThunkAPI } from "@reduxjs/toolkit";
+import { ActionReducerMapBuilder, createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { adminFileUploadService } from "./admin-file-upload.service";
 import { arrayPipeline } from "@/shared/functions";
 
@@ -31,7 +31,7 @@ const initialState = {
 
 type ReducerType = ActionReducerMapBuilder<typeof initialState>;
 class AdminProductService extends HttpInterceptor {
-   //
+   /*-----------productImageUploader------------*/
    private productImageUploader = async (productImages: any[], productId = null) => {
       try {
          const [files, images] = arrayPipeline({
@@ -228,56 +228,3 @@ class AdminProductService extends HttpInterceptor {
 export const adminProductService = new AdminProductService();
 export const adminProductActions = adminProductService.actions;
 export const adminProductReducer = adminProductService.reducer;
-
-/*
-
-api: createAsyncThunk("createProduct", async (paylaod: any, thunkAPI) => {
-         try {
-            const [files, images] = arrayPipeline({
-               input: paylaod?.productImages as any[],
-               filter: (file) => file?.raw,
-               map: {
-                  matched: (file) => ({ raw: file?.raw, isMain: file?.isMain }),
-               },
-            });
-
-            if (files?.length) {
-               const res = await this.productImageUploader(files);
-               paylaod.productImages = [...images, ...res];
-            }
-            const { data } = await this.admin.post("/admin/products", paylaod);
-            return data;
-         } catch (error) {
-            console.log(error);
-            return thunkAPI.rejectWithValue(this.errorMessage(error));
-         }
-      }),
-
-
-
-
-
-         private productImageUploader = async (files: any[]) => {
-      try {
-         const [files, images] = arrayPipeline({
-            input: productImages as any[],
-            filter: (file) => file?.raw,
-            map: {
-               matched: (file) => ({ raw: file?.raw, isMain: file?.isMain }),
-            },
-         });
-
-         const raws = files.map((x) => x.raw);
-         const data = await adminFileUploadService.uploadFile(raws);
-         return data?.data?.map((url: string, idx: number) => ({
-            originImage: url,
-            thumbImage: url,
-            listingImage: url,
-            singleImage: url,
-            isMain: files?.[idx]?.isMain,
-         }));
-      } catch (error) {
-         return error;
-      }
-   };
-*/

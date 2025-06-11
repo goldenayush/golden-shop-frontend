@@ -11,7 +11,7 @@ export default function useCreateCategoryController() {
       try {
          console.log(body);
          await dispatch(adminCategoryService.createCategory.api(body));
-         router.replace("/admin/categories");
+        // router.replace("/admin/categories");
       } catch (error) {
          return;
       }

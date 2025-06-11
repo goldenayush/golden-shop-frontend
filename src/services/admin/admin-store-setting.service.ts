@@ -1,6 +1,8 @@
 import HttpInterceptor from "@/libs/interceptors/http.interceptor";
+import { arrayPipeline } from "@/shared/functions";
 import { ISetting } from "@/types/setting.type";
 import { ActionReducerMapBuilder, createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import { adminFileUploadService } from "./admin-file-upload.service";
 
 const initialState = {
    getStoreSetting: {
@@ -14,6 +16,24 @@ const initialState = {
 
 type BuilderType = ActionReducerMapBuilder<typeof initialState>;
 class AdminStoreSettingService extends HttpInterceptor {
+   private uplaodStoreLogo = async (settings: ISetting[]) => {
+      try {
+         const [logoSettings, remainingSettings] = arrayPipeline({
+            input: settings,
+            filter: (item) => item.name === "storeLogo",
+         });
+         if (typeof logoSettings[0].value !== "object") return null;
+         const res = await adminFileUploadService.uploadFile(logoSettings.map((x) => x.value));
+         let resMap = logoSettings.map((item, idx) => ({
+            ...item,
+            value: res?.data?.[idx],
+         }));
+         return [...resMap, ...remainingSettings];
+      } catch (error) {
+         return error;
+      }
+   };
+
    getStoreSetting = {
       api: createAsyncThunk("!getStoreSetting", async (_, thunkAPI) => {
          try {
@@ -41,6 +61,10 @@ class AdminStoreSettingService extends HttpInterceptor {
    saveStoreSetting = {
       api: createAsyncThunk("saveStoreData", async (body: any, thunkAPI) => {
          try {
+            const res = await this.uplaodStoreLogo(body.settings);
+            if (res) {
+               body.settings = res;
+            }
             const { data } = await this.admin.post("/admin/settings", body);
             return data;
          } catch (error) {

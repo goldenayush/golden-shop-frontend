@@ -17,6 +17,7 @@ export default function useStoreController() {
          storeCity: "",
          storeProvince: "",
          storePostalCode: "",
+         storeLogo: "",
       },
    });
 

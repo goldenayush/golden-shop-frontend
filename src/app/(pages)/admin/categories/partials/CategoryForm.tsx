@@ -3,7 +3,7 @@ import { TextareaFormik, TextFieldFormik } from "@/libs/formik";
 import { Card, Editor } from "@/shared/components";
 import { useFileUpload } from "@/shared/hooks";
 import { Button, Label, Radio, TextField } from "@/shared/ui";
-import { Form, Formik } from "formik";
+import { Field, Form, Formik } from "formik";
 import React, { useEffect, useState } from "react";
 import * as Yup from "yup";
 import { FaArrowUp } from "react-icons/fa";
@@ -29,8 +29,8 @@ export default function CategoryForm({ onSubmit, patchValues, submitting }: Cate
       includeInNav: "1",
       status: "1",
       showProducts: "1",
+      image: "",
    });
-   const { files, handleFileChange, deleteFile } = useFileUpload({});
 
    useEffect(() => {
       if (patchValues) {
@@ -46,6 +46,7 @@ export default function CategoryForm({ onSubmit, patchValues, submitting }: Cate
             includeInNav: String(Number(patchValues?.includeInNav)),
             status: String(Number(patchValues?.status)),
             showProducts: String(Number(patchValues?.showProducts)),
+            image: patchValues?.CategoryDescription?.image,
          } as any);
       }
       return () => {};
@@ -130,23 +131,48 @@ export default function CategoryForm({ onSubmit, patchValues, submitting }: Cate
                      heading="Category banner"
                      className="col-span-4 p-4 mb-4"
                      more={
-                        files?.[0] && (
+                        formik?.values?.image && (
                            <div className="flex items-center gap-2">
-                              <label htmlFor="category-banner-change" className="text-sm font-normal text-blue-500 hover:underline  cursor-pointer">
-                                 <input type="file" onChange={handleFileChange} id="category-banner-change" accept="image/*" hidden />
+                              <label htmlFor="category-banner-change" className="text-sm font-normal text-blue-500 hover:underline cursor-pointer">
+                                 <input //
+                                    type="file"
+                                    id="category-banner-change"
+                                    accept="image/*"
+                                    onChange={(e) => {
+                                       const file = e.target?.files?.[0];
+                                       formik.setFieldValue("image", file);
+                                    }}
+                                    hidden
+                                 />
                                  change
                               </label>
-                              <button className="text-sm font-normal text-red-500 hover:underline  cursor-pointer" onClick={() => deleteFile(0)}>
+                              <button type="button" className="text-sm font-normal text-red-500 hover:underline  cursor-pointer" onClick={() => formik.setFieldValue("image", "")}>
                                  Remove
                               </button>
                            </div>
                         )
                      }>
-                     {files?.[0] ? (
-                        <img src={URL.createObjectURL(files[0])} alt="file" className="w-full" />
+                     {formik?.values?.image ? (
+                        <React.Fragment>
+                           {typeof formik?.values?.image === "object" ? ( //
+                              <img src={URL.createObjectURL(formik?.values?.image)} alt="file" className="w-full" />
+                           ) : (
+                              <img crossOrigin="anonymous" src={formik?.values?.image} alt="file" className="w-full" />
+                           )}
+                        </React.Fragment>
                      ) : (
                         <label htmlFor="category-banner" className="min-h-[170px] border-2 rounded-sm border-dashed border-gray-400 flex items-center justify-center cursor-pointer">
-                           <input type="file" accept="image/*" onChange={handleFileChange} id="category-banner" hidden />
+                           <input //
+                              type="file"
+                              name="image"
+                              accept="image/*"
+                              id="category-banner"
+                              onChange={(e) => {
+                                 const file = e.target?.files?.[0];
+                                 formik.setFieldValue("image", file);
+                              }}
+                              hidden
+                           />
                            <div>
                               <span className="text-white bg-[#5c5f62] h-[38px] w-[38px] rounded-full flex  justify-center items-center mx-auto my-2">
                                  <FaArrowUp size={19} />
