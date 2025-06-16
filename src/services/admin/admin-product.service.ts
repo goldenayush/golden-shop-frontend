@@ -1,9 +1,8 @@
+import AdminFileUpload from "@/libs/admin-file-uploader/admin-file-uploader";
 import HttpInterceptor from "@/libs/interceptors/http.interceptor";
 import { IPagination } from "@/types/pagination.type";
 import { IProduct } from "@/types/product.type";
 import { ActionReducerMapBuilder, createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { adminFileUploadService } from "./admin-file-upload.service";
-import { arrayPipeline } from "@/shared/functions";
 
 const initialState = {
    createProduct: {
@@ -31,36 +30,11 @@ const initialState = {
 
 type ReducerType = ActionReducerMapBuilder<typeof initialState>;
 class AdminProductService extends HttpInterceptor {
-   /*-----------productImageUploader------------*/
-   private productImageUploader = async (productImages: any[], productId = null) => {
-      try {
-         const [files, images] = arrayPipeline({
-            input: productImages as any[],
-            filter: (file) => file?.raw,
-            map: {
-               matched: (file) => ({ raw: file?.raw, isMain: file?.isMain }),
-            },
-         });
-         if (!files?.length) return null;
-         const res = await adminFileUploadService.uploadFile(files.map((f) => f.raw));
-         const resMap = res?.data?.map((url: string, idx: number) => ({
-            ...(productId ? { productId } : {}),
-            originImage: url,
-            thumbImage: url,
-            listingImage: url,
-            singleImage: url,
-            isMain: files?.[idx]?.isMain,
-         }));
-         return [...images, ...resMap];
-      } catch (error) {
-         return error;
-      }
-   };
-
    createProduct = {
       api: createAsyncThunk("createProduct", async (paylaod: any, thunkAPI) => {
          try {
-            const res = await this.productImageUploader(paylaod?.productImages);
+            const images = paylaod?.productImages;
+            const res = await new AdminFileUpload().productImageUploader(images);
             if (res) {
                paylaod.productImages = res;
             }
@@ -139,7 +113,8 @@ class AdminProductService extends HttpInterceptor {
          try {
             body.productInventory.productId = body?.id;
             body.productInventory.id = body?.id;
-            const res = await this.productImageUploader(body?.productImages, body?.id);
+            const images = body?.productImages;
+            const res = await new AdminFileUpload().productImageUploader(images);
             if (res) {
                body.productImages = res;
             }
@@ -208,6 +183,7 @@ class AdminProductService extends HttpInterceptor {
          });
       },
    };
+
    private slice = createSlice({
       name: "AdminProductService",
       initialState,

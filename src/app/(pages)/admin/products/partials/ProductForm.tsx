@@ -1,7 +1,7 @@
 "use client";
 import { Card, Editor } from "@/shared/components";
-import { Button, Label, Radio, Select } from "@/shared/ui";
-import React, { JSX, useEffect, useState } from "react";
+import { Button, Label, Radio, Select, UploadGallery } from "@/shared/ui";
+import React, { JSX, useEffect, useRef, useState } from "react";
 import { Field, Form, Formik } from "formik";
 import * as Yup from "yup";
 import { TextFieldFormik } from "@/libs/formik";
@@ -9,17 +9,15 @@ import SelectAttributeGroup from "./SelectAttributeGroup";
 import CategorySelector from "./CategorySelector";
 import ProductVariant from "./ProductVariant";
 import { IProduct } from "@/types/product.type";
-import UploadGrid from "../../components/UploadGrid";
 
 type Props = {
    onSubmit: (body: any) => void;
    loading?: boolean;
-   patchValues?: IProduct;
+   patchValues?: IProduct | null;
 };
 
 export default function ProductForm({ onSubmit, loading, patchValues }: Props) {
-   const [images, setImages] = useState<any[]>([]);
-
+   const refUpload = useRef<any>(null);
    const [fields, setFields] = useState({
       type: "",
       visibility: "1",
@@ -49,6 +47,8 @@ export default function ProductForm({ onSubmit, loading, patchValues }: Props) {
 
    const submit = (body: typeof fields) => {
       const { visibility, status, productInventory, ...rest } = body;
+      const iamges = refUpload.current?.files;
+
       const paylaod = {
          ...rest,
          visibility: !!+visibility,
@@ -58,17 +58,14 @@ export default function ProductForm({ onSubmit, loading, patchValues }: Props) {
             manageStock: !!+productInventory.manageStock,
             stockAvailability: !!+productInventory.stockAvailability,
          },
-         productImages: images.map((item: any) => {
-            const { src, id, ...data } = item;
-            return {
-               ...data,
-            };
-         }),
+         productImages: iamges,
       };
       onSubmit(paylaod);
    };
 
    useEffect(() => {
+      console.log("main products : ", patchValues);
+
       if (patchValues) {
          setFields({
             id: patchValues.id,
@@ -159,14 +156,11 @@ export default function ProductForm({ onSubmit, loading, patchValues }: Props) {
                         </Card>
                         {/* Media */}
                         <Card className="p-4 mt-3" heading="Media">
-                           <UploadGrid //
-                              initialImages={
-                                 patchValues?.productImages?.map((data) => ({
-                                    ...data,
-                                    src: data.originImage,
-                                 })) || []
-                              }
-                              getData={(imgs) => setImages(imgs)}
+                           <UploadGallery //
+                              ref={refUpload}
+                              initialvalue={patchValues?.productImages || []}
+                              size="md"
+                              id="main-product"
                            />
                         </Card>
                         {/* Search engine optimize */}
@@ -188,7 +182,12 @@ export default function ProductForm({ onSubmit, loading, patchValues }: Props) {
                               <TextFieldFormik label="Meta description" id="metaDescription" name="productDescription.metaDescription" className="h-[100px]" />
                            </div>
                         </Card>
-                        {Boolean(patchValues) && <ProductVariant />}
+                        {Boolean(patchValues) && (
+                           <ProductVariant //
+                              productId={patchValues?.id}
+                              variantId={patchValues?.variantId}
+                           />
+                        )}
                      </div>
                      <div className="col-span-12 lg:col-span-4">
                         {/* Product status */}
@@ -308,17 +307,6 @@ export default function ProductForm({ onSubmit, loading, patchValues }: Props) {
       </Formik>
    );
 }
-
-const ItemGrid = ({ title, item }: { title: string; item: JSX.Element | string }) => {
-   return (
-      <div className="flex items-center border-t-1 border-x-1 border-[#e1e3e5]">
-         <div className="flex-[35%] p-2">
-            <span className="text-[14px]">{title}</span>
-         </div>
-         <div className="flex-[65%] p-2 border-l-1 border-[#e1e3e5]">{item}</div>
-      </div>
-   );
-};
 
 const validationSchema = Yup.object().shape({
    sku: Yup.string().required("This field can not be empty"),

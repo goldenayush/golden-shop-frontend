@@ -2,6 +2,7 @@ export interface IProduct {
    id: string;
    type: string;
    visibility: boolean;
+   variantId: string;
    groupId: string;
    sku: string;
    price: number;

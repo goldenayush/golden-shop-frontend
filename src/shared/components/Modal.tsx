@@ -1,5 +1,6 @@
 "use client";
 import React, { CSSProperties, forwardRef, useImperativeHandle, useState } from "react";
+import { createPortal } from "react-dom";
 import { IoClose } from "react-icons/io5";
 
 type ModalSize = "sm" | "md" | "lg" | "xl" | "full";
@@ -48,25 +49,30 @@ export const Modal = forwardRef(
       }
       return (
          <>
-            {isOpen && (
-               <div //
-                  className={`fixed inset-0 z-50 flex ${placementClass} justify-center bg-opacity-50 modal-fade-in overflow-y-auto`}
-                  style={styles.overlay}
-                  onClick={() => closeable && setIsOpen(false)}>
-                  <div className={`bg-white rounded shadow ${sizeClass} ${className ? " " + className : ""}`} onClick={(e) => e.stopPropagation()}>
-                     {title && (
-                        <div className="flex justify-between items-center mb-4">
-                           <h2 className="text-xl font-semibold text-[16px]">{title}</h2>
-                           {closeable && (
-                              <button onClick={() => setIsOpen(false)} className="text-xl">
-                                 <IoClose className="text-red-500" />
-                              </button>
+            {createPortal(
+               <React.Fragment>
+                  {isOpen && (
+                     <div //
+                        className={`fixed inset-0 z-50 flex ${placementClass} justify-center bg-opacity-50 modal-fade-in overflow-y-auto`}
+                        style={styles.overlay}
+                        onClick={() => closeable && setIsOpen(false)}>
+                        <div className={`bg-white rounded shadow ${sizeClass} ${className ? " " + className : ""}`} onClick={(e) => e.stopPropagation()}>
+                           {title && (
+                              <div className="flex justify-between items-center mb-4">
+                                 <h2 className="text-xl font-semibold text-[16px]">{title}</h2>
+                                 {closeable && (
+                                    <button onClick={() => setIsOpen(false)} className="text-xl">
+                                       <IoClose className="text-red-500" />
+                                    </button>
+                                 )}
+                              </div>
                            )}
+                           {children}
                         </div>
-                     )}
-                     {children}
-                  </div>
-               </div>
+                     </div>
+                  )}
+               </React.Fragment>,
+               document?.getElementById("modal-portal")!!
             )}
          </>
       );

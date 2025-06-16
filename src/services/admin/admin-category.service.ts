@@ -1,8 +1,8 @@
+import AdminFileUpload from "@/libs/admin-file-uploader/admin-file-uploader";
 import HttpInterceptor from "@/libs/interceptors/http.interceptor";
 import { ICategory } from "@/types/category.type";
 import { IPagination } from "@/types/pagination.type";
 import { ActionReducerMapBuilder, createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { adminFileUploadService } from "./admin-file-upload.service";
 
 const initialState = {
    createCategory: {
@@ -27,16 +27,6 @@ const initialState = {
 type ReducersServiceType = ActionReducerMapBuilder<typeof initialState>;
 
 class AdminCategoryService extends HttpInterceptor {
-   private categoryImageUpload = async (image: File | string | null) => {
-      try {
-         if (!image || typeof image !== "object") return null;
-         const res = await adminFileUploadService.uploadFile([image]);
-         return res.data[0];
-      } catch (error) {
-         return error;
-      }
-   };
-
    getCategoriesTree = {
       api: createAsyncThunk("!getCategoriesTree", async (_, thunkAPI) => {
          try {
@@ -50,7 +40,8 @@ class AdminCategoryService extends HttpInterceptor {
    createCategory = {
       api: createAsyncThunk("createCategory", async (category: any, thunkAPI) => {
          try {
-            const res = await this.categoryImageUpload(category?.categoryDescription?.image);
+            const files = category?.categoryDescription?.image;
+            const res = await new AdminFileUpload().categoryImageUpload(files);
             if (res) {
                category.categoryDescription.image = res;
             }
@@ -128,7 +119,8 @@ class AdminCategoryService extends HttpInterceptor {
    updateCategory = {
       api: createAsyncThunk("updateCategory", async (category: any, thunkAPI) => {
          try {
-            const res = await this.categoryImageUpload(category?.categoryDescription?.image);
+            const files = category?.categoryDescription?.image;
+            const res = await new AdminFileUpload().categoryImageUpload(files);
             if (res) {
                category.categoryDescription.image = res;
             }

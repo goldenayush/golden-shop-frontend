@@ -22,8 +22,8 @@ export function Button({ loading, ...props }: Props) {
 
 const styles = {
    disabled: {
-      color: "white",
-      background: "#aaa9a9",
+     // color: "white",
+     // background: "#aaa9a9",
       cursor: "not-allowed",
       border: "none",
    },

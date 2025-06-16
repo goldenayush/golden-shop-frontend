@@ -10,3 +10,4 @@ export { DatePicker } from "./date-picker";
 export { Checkbox } from "./Checkbox";
 export { Dropdown } from "./Dropdown";
 export { Badge } from "./Badge";
+export { UploadGallery } from "../components/UploadGallery";

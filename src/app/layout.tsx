@@ -26,6 +26,7 @@ export default function RootLayout({ children }: Props) {
             className={`${geistSans.variable} ${geistMono.variable}`}
             suppressHydrationWarning={true}>
             <App>{children}</App>
+            <div id="modal-portal" />
          </body>
       </html>
    );
