@@ -1,5 +1,4 @@
 import { useAppDispatch, useAppSelector } from "@/libs/redux/hooks/hooks.redux";
-import { adminFileUploadService } from "@/services/admin/admin-file-upload.service";
 import { adminProductService } from "@/services/admin/admin-product.service";
 import { useParams, useRouter } from "next/navigation";
 import React, { useEffect, useRef } from "react";

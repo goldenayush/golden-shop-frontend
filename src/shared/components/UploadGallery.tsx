@@ -1,3 +1,4 @@
+"use client";
 import { IProductImage } from "@/types/product.type";
 import React, { useState, useCallback, useRef, useEffect, forwardRef, useImperativeHandle } from "react";
 import { useDrag, useDrop, DndProvider } from "react-dnd";
