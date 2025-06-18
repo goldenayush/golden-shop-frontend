@@ -8,7 +8,7 @@ export default class HttpInterceptor {
    private http: AxiosInstance;
 
    private get BASE_URL() {
-      return "http://localhost:4000/v1";
+      return "https://golden-shop-backend-1.onrender.com/v1";
    }
 
    constructor() {
