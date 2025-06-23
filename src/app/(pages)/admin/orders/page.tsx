@@ -1,14 +1,14 @@
 "use client";
 import React from "react";
 import useOrdersController from "./orders.controller";
-import { Card, PageHeader, Table } from "@/shared/components";
+import { Card, Loading, PageHeader, Table } from "@/shared/components";
 import Link from "next/link";
 import { Badge, Dropdown } from "@/shared/ui";
 import { FaCaretUp, FaCircle, FaRegCircle } from "react-icons/fa";
 
 export default function OrdersPage() {
-   const ctrl = useOrdersController();
-   console.log(ctrl.orders);
+   const { orders, isLoading } = useOrdersController();
+   if (isLoading) return <Loading />;
    return (
       <div className="p-7">
          <PageHeader heading="Orders" />
@@ -45,7 +45,7 @@ export default function OrdersPage() {
                               {/*  */}
                            </div>
                         )}
-                        onChange={(value) => {}}
+                        onChange={(value) => { }}
                      />
                   </div>
                   <div>
@@ -70,12 +70,12 @@ export default function OrdersPage() {
                               {props.label}
                            </span>
                         )}
-                        onChange={(value) => {}}
+                        onChange={(value) => { }}
                      />
                   </div>
                </div>
                <div>
-                  <Link href="/admin/products" className="text-[14px] text-blue-500 hover:underline" replace>
+                  <Link href="/admin/orders" className="text-[14px] text-blue-500 hover:underline" replace>
                      Clear Filter
                   </Link>
                </div>
@@ -96,35 +96,37 @@ export default function OrdersPage() {
                   { label: "Payment Status", key: "payment_status", sort: true },
                   { label: "Total", key: "total", sort: true },
                ]}
-               dataList={ctrl.orders.map((data) => ({
+               dataList={(orders ?? []).map((data: any) => ({
                   id: data.id,
                   order_number: (
                      <Link href={`/admin/orders/${data?.id}`} className="text-[14px] font-semibold hover:underline">
-                        #{data?.order_number}
+                        #{data?.id}
                      </Link>
                   ),
                   date: (
                      <span className="text-[14px]">
-                        <span>{data.date.toLocaleDateString("en-US", { year: "numeric", month: "short", day: "numeric" })}</span>
+                        {/* <span>{data.date.toLocaleDateString("en-US", { year: "numeric", month: "short", day: "numeric" })}</span> */}
+                        {new Date(data?.createdAt).toLocaleDateString("en-US", { year: "numeric", month: "short", day: "numeric" })}
                      </span>
                   ),
                   customer_email: (
                      <span className="text-[14px]">
-                        <span>{data?.customer_email}</span>
+                        <span>{data.customerEmail
+                        }</span>
                      </span>
                   ),
                   shipment_status: (
                      <>
                         {data?.shipment_status !== "pending" ? (
                            <Badge //
-                              title={data?.shipment_status}
+                              title={data?.shipmentStatus}
                               bg="#aee9d1"
                               color="#202223"
                               iconBefore={<FaCircle size={10} color="#007f5f" />}
                            />
                         ) : (
                            <Badge //
-                              title={data?.shipment_status}
+                              title={data?.shipmentStatus}
                               bg="#E4E5E7"
                               color="#202223"
                               iconBefore={<FaRegCircle size={10} />}
@@ -134,16 +136,16 @@ export default function OrdersPage() {
                   ),
                   payment_status: (
                      <>
-                        {data?.payment_status === "paid" ? (
+                        {data?.paymentStatus === "paid" ? (
                            <Badge //
-                              title={data?.payment_status}
+                              title={data?.paymentStatus}
                               bg="#aee9d1"
                               color="#202223"
                               iconBefore={<FaCircle size={10} color="#007f5f" />}
                            />
                         ) : (
                            <Badge //
-                              title={data?.payment_status}
+                              title={data?.paymentStatus}
                               bg="#E4E5E7"
                               color="#202223"
                               iconBefore={<FaRegCircle size={10} />}
@@ -151,7 +153,7 @@ export default function OrdersPage() {
                         )}
                      </>
                   ),
-                  total: <span className="text-[14px]">₹{data?.total}</span>,
+                  total: <span className="text-[14px]">₹{data?.grandTotal}</span>,
                }))}
                onSort={(param) => {
                   console.log(param);

@@ -11,7 +11,7 @@ export default function AdminProductsPage() {
    const ctrl = useProductsController();
    return (
       <div className="p-3 md:p-7">
-         <PageHeader //
+         <PageHeader
             heading="Products"
             action={{
                title: "New Products",
