@@ -63,6 +63,7 @@ class AdminProductService extends HttpInterceptor {
          try {
             const queryStr = query ? "?" + query : "";
             const { data } = await this.admin.get(`/products${queryStr}`);
+            console.log("data from get products...", data);
             return data;
          } catch (error) {
             return thunkAPI.rejectWithValue(this.errorMessage(error));
@@ -187,7 +188,11 @@ class AdminProductService extends HttpInterceptor {
    private slice = createSlice({
       name: "AdminProductService",
       initialState,
-      reducers: {},
+      reducers: {
+         setID(state) {
+            state.singleProduct.data?.variantId
+         }
+      },
       extraReducers: (builder) => {
          this.createProduct.reducer(builder);
          this.getProducts.reducer(builder);

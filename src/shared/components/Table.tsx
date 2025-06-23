@@ -48,20 +48,23 @@ function List({ dataList, colums, checkable, onSort, pagination, checkEventList 
       <div className="relative overflow-x-auto">
          <table className="w-full text-sm text-left rtl:text-right" suppressHydrationWarning={true}>
             <thead className="text-xs text-gray-700 uppercase">
-               {checkable && (
-                  <th scope="col" className="px-6 py-4 border-b border-gray-200">
-                     <Checkbox
-                        onChange={(e) =>
-                           setProducts((prev) =>
-                              prev.map((item) => ({
-                                 ...item,
-                                 checked: e.target.checked,
-                              }))
-                           )
-                        }
-                     />
-                  </th>
-               )}
+               <tr>
+                  {checkable && (
+                     <th scope="col" className="px-6 py-4 border-b border-gray-200">
+                        <Checkbox
+                           onChange={(e) =>
+                              setProducts((prev) =>
+                                 prev.map((item) => ({
+                                    ...item,
+                                    checked: e.target.checked,
+                                 }))
+                              )
+                           }
+                        />
+                     </th>
+
+                  )}
+               </tr>
                {colums?.map((colum) => (
                   <th key={colum.key} scope="col" className="px-4 py-4 border-b border-gray-200">
                      <div className="flex items-center gap-2">

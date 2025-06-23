@@ -24,7 +24,7 @@ class AdminOrderService extends HttpInterceptor {
          try {
             const queryString = query ? "?" + query : "";
             const { data } = await this.admin.get(`/admin/orders/all-orders${queryString}`);
-            return data;
+            return data.data.orders;
          } catch (error) {
             return thunkAPI.rejectWithValue(this.errorMessage(error));
          }
@@ -34,7 +34,6 @@ class AdminOrderService extends HttpInterceptor {
             state.getAdminOrders.isLoading = true;
          });
          builder.addCase(this.api.fulfilled, (state, action) => {
-            console.log(action.payload);
             state.getAdminOrders.isLoading = false;
             state.getAdminOrders.data = action.payload;
             state.getAdminOrders.pagination = action.payload;

@@ -137,7 +137,6 @@ class AdminCollectionService extends HttpInterceptor {
             state.updateCollection.isLoading = true;
          });
          builder.addCase(this.api.fulfilled, (state, action) => {
-            console.log(action.payload?.data);
             state.updateCollection.isLoading = false;
          });
          builder.addCase(this.api.rejected, (state) => {

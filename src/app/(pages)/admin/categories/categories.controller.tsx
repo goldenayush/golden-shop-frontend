@@ -43,12 +43,12 @@ export default function useCategoriesController() {
 
    useEffect(() => {
       dispatch(adminCategoryService.fetchCategories.api(searchParams.toString()));
-      return () => {};
+      return () => { };
    }, [searchParams]);
 
    return { fetchCategories, onSeleteMultipleCategory, deleteMultipleCategory, getBreadcrumbs, setParam, debounce };
 }
 /*
- TODO: 
+ TODO:
      need pagination res
 */

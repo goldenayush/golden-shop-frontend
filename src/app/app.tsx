@@ -1,5 +1,6 @@
 "use client";
 import StoreProvider from "@/libs/redux/providers/redux.provider";
+import { Loading } from "@/shared/components";
 import { usePathname } from "next/navigation";
 import React, { ReactNode, useEffect, useState } from "react";
 
@@ -17,7 +18,7 @@ export default function App({ children }: Props) {
    const loading = !mounted && pathname.startsWith("/admin"); //csr only for /admin.... routes
 
    if (loading) {
-      return "laoding...";
+      return <Loading className="h-[70vh] text-3xl" />;
    }
    return <StoreProvider>{children}</StoreProvider>;
 }
