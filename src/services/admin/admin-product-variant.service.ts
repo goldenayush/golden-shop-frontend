@@ -69,8 +69,6 @@ class AdminProductVariantService extends HttpInterceptor {
             state.getVariantGroups.isLoading = true;
          });
          builder.addCase(this.api.fulfilled, (state, action) => {
-            console.log(action.payload.data);
-
             state.getVariantGroups.isLoading = false;
             state.getVariantGroups.data = action.payload.data;
          });

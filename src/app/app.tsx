@@ -18,7 +18,8 @@ export default function App({ children }: Props) {
    const loading = !mounted && pathname.startsWith("/admin"); //csr only for /admin.... routes
 
    if (loading) {
-      return <Loading className="h-[70vh] text-3xl" />;
+      // return <Loading className="h-[70vh] text-3xl" />;
+      return <div className="h-[70vh] text-3xl">Loading...</div>;
    }
    return <StoreProvider>{children}</StoreProvider>;
 }

@@ -3,7 +3,7 @@ import { IPagination } from "@/types/pagination.type";
 import { ActionReducerMapBuilder, createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
-   getAdminOrders: {
+   getOrders: {
       isLoading: true,
       data: [] as any[],
       pagination: null as null | IPagination,
@@ -15,12 +15,16 @@ const initialState = {
    updateAdminOrderStatus: {
       isLoading: false,
    },
+   cancelAdminOrder: {
+      isLoading: true,
+      data: null as null | any,
+   }
 };
 
 type BuilderType = ActionReducerMapBuilder<typeof initialState>;
 class AdminOrderService extends HttpInterceptor {
-   getAdminOrders = {
-      api: createAsyncThunk("!getAdminOrders", async (query: string | undefined = "", thunkAPI) => {
+   getOrders = {
+      api: createAsyncThunk("!getOrders", async (query: string | undefined = "", thunkAPI) => {
          try {
             const queryString = query ? "?" + query : "";
             const { data } = await this.admin.get(`/admin/orders/all-orders${queryString}`);
@@ -31,17 +35,17 @@ class AdminOrderService extends HttpInterceptor {
       }),
       reducer(builder: BuilderType) {
          builder.addCase(this.api.pending, (state) => {
-            state.getAdminOrders.isLoading = true;
+            state.getOrders.isLoading = true;
          });
          builder.addCase(this.api.fulfilled, (state, action) => {
-            state.getAdminOrders.isLoading = false;
-            state.getAdminOrders.data = action.payload;
-            state.getAdminOrders.pagination = action.payload;
+            state.getOrders.isLoading = false;
+            state.getOrders.data = action.payload;
+            state.getOrders.pagination = action.payload;
          });
          builder.addCase(this.api.rejected, (state) => {
-            state.getAdminOrders.isLoading = false;
-            state.getAdminOrders.data = [];
-            state.getAdminOrders.pagination = null;
+            state.getOrders.isLoading = false;
+            state.getOrders.data = [];
+            state.getOrders.pagination = null;
          });
       },
    };
@@ -50,7 +54,7 @@ class AdminOrderService extends HttpInterceptor {
       api: createAsyncThunk("!getAdminSingleOrders", async (id: string, thunkAPI) => {
          try {
             const { data } = await this.admin.get(`/customer/orders/by-id/${id}`);
-            return data;
+            return data.data;
          } catch (error) {
             return thunkAPI.rejectWithValue(this.errorMessage(error));
          }
@@ -71,7 +75,7 @@ class AdminOrderService extends HttpInterceptor {
    };
 
    updateAdminOrderStatus = {
-      api: createAsyncThunk("updateAdminOrderStatus", async (body: string, thunkAPI) => {
+      api: createAsyncThunk("!updateAdminOrderStatus", async (body: string, thunkAPI) => {
          try {
             const { data } = await this.admin.patch(`/admin/orders/update-order-status`, body);
             return data;
@@ -91,12 +95,33 @@ class AdminOrderService extends HttpInterceptor {
          });
       },
    };
+   cancelAdminOrder = {
+      api: createAsyncThunk("cancelAdminOrder", async (id: string, thunkAPI) => {
+         try {
+            const { data } = await this.admin.put(`/customer/orders/cancel-order/${id}`);
+            return data;
+         } catch (error) {
+            return thunkAPI.rejectWithValue(this.errorMessage(error));
+         }
+      }),
+      reducer(builder: BuilderType) {
+         builder.addCase(this.api.pending, (state) => {
+            state.cancelAdminOrder.isLoading = true;
+         });
+         builder.addCase(this.api.fulfilled, (state) => {
+            state.cancelAdminOrder.isLoading = false;
+         });
+         builder.addCase(this.api.rejected, (state) => {
+            state.cancelAdminOrder.isLoading = false;
+         });
+      },
+   };
    private slice = createSlice({
       name: "AdminOrderService",
       initialState,
       reducers: {},
       extraReducers: (builder) => {
-         this.getAdminOrders.reducer(builder);
+         this.getOrders.reducer(builder);
          this.getAdminSingleOrders.reducer(builder);
          this.updateAdminOrderStatus.reducer(builder);
       },
@@ -108,3 +133,4 @@ class AdminOrderService extends HttpInterceptor {
 export const adminOrderService = new AdminOrderService();
 export const adminOrderActions = adminOrderService.actions;
 export const adminOrderReducer = adminOrderService.reducer;
+
