@@ -187,7 +187,11 @@ class AdminProductService extends HttpInterceptor {
    private slice = createSlice({
       name: "AdminProductService",
       initialState,
-      reducers: {},
+      reducers: {
+         setID(state) {
+            state.singleProduct.data?.variantId
+         }
+      },
       extraReducers: (builder) => {
          this.createProduct.reducer(builder);
          this.getProducts.reducer(builder);

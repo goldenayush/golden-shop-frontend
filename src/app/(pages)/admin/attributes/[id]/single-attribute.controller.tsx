@@ -28,13 +28,11 @@ export default function useSingleAttributeController() {
                   };
                }),
          };
-         console.log(payload);
          delete payload.groupIds;
          await dispatch(adminAttributeService.updateAttribute.api(payload)).unwrap();
          router.replace("/admin/attributes");
       } catch (error) {
          console.log(error);
-
          return;
       }
    };
@@ -43,7 +41,7 @@ export default function useSingleAttributeController() {
       if (params?.id) {
          dispatch(adminAttributeService.getSingleAttribute.api(params?.id));
       }
-      return () => {};
+      return () => { };
    }, [params?.id]);
 
    return {
