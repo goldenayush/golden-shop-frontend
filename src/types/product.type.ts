@@ -5,6 +5,7 @@ export interface IProduct {
    variantId: string;
    groupId: string;
    sku: string;
+
    price: number;
    weight: number;
    status: boolean;

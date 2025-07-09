@@ -38,7 +38,8 @@ const attribute_groups = [
    { id: "q7r8", name: "Default", value: "default" }, //
 ];
 
-const sku = [
+export const sku = [
+
    { id: "s9t0", name: "Laddu Gopal Jewelry Set", value: "laddu-gopal-jewelry-set" },
    { id: "u1v2", name: "Laddu Gopal Jewelry Set", value: "laddu-gopal-jewelry-set" },
    { id: "w3x4", name: "Laddu Gopal Jewelry Set", value: "laddu-gopal-jewelry-set" },
@@ -90,7 +91,13 @@ export default function SelectKeyAttributes({ keyName, setValue, multiple, title
             </div>
             <div className="mt-3">
                {list?.map((category, idx) => {
-                  const isSelect = selcted?.length && selcted?.some((e) => e?.id === category?.id);
+                  // const isSelect = selcted?.length && selcted?.some((e) => e?.id === category?.id);
+
+
+                  const isSelect = selcted?.some((e) =>
+                     typeof e === "string" ? e === category?.id : e?.id === category?.id
+                  );
+
                   return (
                      <React.Fragment //
                         key={`product-category-${idx}`}>

@@ -14,6 +14,8 @@ import { adminCmsReducer } from "./admin/admin-cms.service";
 import { adminCustomerReducer } from "./admin/admin-customer.service";
 import { adminProductVariantReducer } from "./admin/admin-product-variant.service";
 import { adminDashboardReducer } from "./admin/admin-dashborad.service";
+import { adminCouponsReducer } from "./admin/admin-coupons.service";
+
 
 const rootReducer = combineReducers({
    admin: combineReducers({
@@ -27,6 +29,7 @@ const rootReducer = combineReducers({
       adminShippingSetting: adminShippingSettingReducer,
       adminStoreSetting: adminStoreSettingReducer,
       adminOrder: adminOrderReducer,
+      coupons: adminCouponsReducer,
       adminTaxSetting: adminTaxSettingReducer,
       adminCms: adminCmsReducer,
       adminCustomer: adminCustomerReducer,

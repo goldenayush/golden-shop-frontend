@@ -15,7 +15,7 @@ export default function SelectAttributeGroup() {
 
    useEffect(() => {
       dispatch(adminAttributeService.getGroups.api());
-      return () => {};
+      return () => { };
    }, []);
 
    useEffect(() => {
@@ -23,7 +23,7 @@ export default function SelectAttributeGroup() {
          const selected: any = getGroups?.data?.find((item) => item?.id === groupId);
          setGroup(selected?.AttributeGroupAttribute);
       }
-      return () => {};
+      return () => { };
    }, [groupId, getGroups.data]);
 
    if (getGroups.isLoading) {
@@ -78,10 +78,9 @@ const CustomInput = ({ idx, data }: { idx: number; data: any }) => {
 
    useEffect(() => {
       if (attributeId) {
-         console.log("...");
          formik.setFieldValue(`ProductAttributeValueIndex.${idx}.attributeId`, attributeId);
       }
-      return () => {};
+      return () => { };
    }, [attributeId]);
 
    switch (inputType) {

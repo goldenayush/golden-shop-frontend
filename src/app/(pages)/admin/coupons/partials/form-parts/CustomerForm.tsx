@@ -2,10 +2,9 @@ import { Select, TextField } from "@/shared/ui";
 import { ErrorMessage, Field, FormikProps } from "formik";
 import * as Yup from "yup";
 import React from "react";
-import { ICouponfields } from "../CouponForm";
-
+import { CreateCoupon } from "@/types/coupons.type";
 type Props = {
-   formik: FormikProps<ICouponfields>;
+   formik: FormikProps<CreateCoupon>;
 };
 
 export default function CustomerForm({ formik }: Props) {
@@ -13,29 +12,30 @@ export default function CustomerForm({ formik }: Props) {
       <div>
          <div className="mb-3">
             <Field //
-               as={Select}
-               name="customer_conditions.customer_id"
-               placeholder="Select Customer"
-               options={[
-                  { label: "Customer 1", value: "1" },
-                  { label: "Customer 2", value: "2" },
-               ]}
+               as={TextField}
+               name="userCondition.emails"
+               label="Customer Email(s)"
+               placeholder="Enter Customer Email(s)"
             />
             <ErrorMessage //
-               name="customer_conditions.customer_id"
+               name="userCondition.emails"
                component="small"
                className="field-error"
             />
          </div>
          <div className="mb-3">
             <Field //
-               as={TextField}
-               name="customer_conditions.email"
-               label="Customer email (empty for all)"
-               placeholder="Enter Customer Email"
+               as={Select}
+               name="userCondition.groups"
+               label="Customer Groups"
+               options={[
+                  { label: "Group 1", value: "1" },
+                  { label: "Group 2", value: "2" },
+               ]}
+               multi
             />
             <ErrorMessage //
-               name="customer_conditions.email"
+               name="userCondition.groups"
                component="small"
                className="field-error"
             />
@@ -43,12 +43,12 @@ export default function CustomerForm({ formik }: Props) {
          <div>
             <Field //
                as={TextField}
-               label="Customer's purchase"
-               name="customer_conditions.purchase_amount"
-               placeholder="Enter Purchase Amount"
+               label="Purchased Amount"
+               name="userCondition.purchased"
+               placeholder="Enter Purchased Amount"
             />
             <ErrorMessage //
-               name="customer_conditions.purchase_amount"
+               name="userCondition.purchased"
                component="small"
                className="field-error"
             />
@@ -58,7 +58,7 @@ export default function CustomerForm({ formik }: Props) {
 }
 
 export const customerSchemas = Yup.object().shape({
-   customer_id: Yup.string().required("customer_id is required"),
-   email: Yup.string().required("email is required"),
-   purchase_amount: Yup.string().required("purchase_amount is required"),
+   emails: Yup.string().required("Email is required"),
+   groups: Yup.array().of(Yup.string()).required("Groups are required"),
+   purchased: Yup.number().required("Purchased amount is required"),
 });

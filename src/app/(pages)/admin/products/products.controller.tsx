@@ -13,7 +13,7 @@ export default function useProductsController() {
       time: 1000,
       callback(value) {
          dispatch(adminProductService.getProducts.api(`search=${value}`));
-         console.log(value);
+
       },
    });
 
@@ -35,9 +35,9 @@ export default function useProductsController() {
 
    useEffect(() => {
       dispatch(adminProductService.getProducts.api(searchParams.toString()));
-      return () => {};
+      return () => { };
    }, [searchParams]);
 
    return { setParam, getProducts, onDeleteProduct, deleteProduct, onUpdateStatusProduct, updateStatusProduct, debounce };
 }
-// TODO:
+

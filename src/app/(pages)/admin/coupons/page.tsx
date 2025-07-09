@@ -2,13 +2,23 @@
 import React from "react";
 import useCouponsController from "./coupons.controller";
 import Link from "next/link";
-import { Card, PageHeader, Table } from "@/shared/components";
+import { Card, Loading, PageHeader, Table } from "@/shared/components";
 import { Dropdown } from "@/shared/ui";
 import { FaCaretUp } from "react-icons/fa";
 import { GoDotFill } from "react-icons/go";
+import { formatDateTime } from "@/shared/functions/format-date-time";
 
 export default function CouponsPage() {
    const ctrl = useCouponsController();
+
+   if (ctrl.isFetching) {
+      return (
+         <div className="p-7">
+            <PageHeader heading="Coupons" />
+            <Loading />
+         </div>
+      );
+   }
    return (
       <div className="p-7">
          <PageHeader
@@ -27,9 +37,11 @@ export default function CouponsPage() {
                         type="text"
                         className="border border-gray-300 rounded-sm text-[12px] px-3 py-1 placeholder:text-[12px] placeholder:font-semibold"
                         placeholder="Search"
+                        value={ctrl.debounce?.searchKey}
+                        onChange={ctrl.debounce?.onSearchChange}
                      />
-                     <div>
-                        <Dropdown //
+                     {/* <div>
+                        <Dropdown
                            options={[
                               { value: "1", label: "enabled" }, //
                               { value: "0", label: "disabled" }, //
@@ -42,19 +54,19 @@ export default function CouponsPage() {
                            )}
                            OptionComponent={(props) => (
                               <span className="text-xs font-semibold capitalize">
-                                 {/*  */}
+
                                  {props.label}
-                                 {/*  */}
+
                               </span>
                            )}
-                           onChange={(value) => {}}
+                           onChange={(value) => ctrl.setParam({ status: value })}
                         />
-                     </div>
+                     </div> */}
                      <div>
                         <Dropdown //
                            options={[
-                              { value: "1", label: "Free shipping" }, //
-                              { value: "0", label: "No free shipping" }, //
+                              { value: "1", label: "Free shipping" },
+                              { value: "0", label: "No free shipping" },
                            ]}
                            Component={(props) => (
                               <span className="flex items-center gap-2 border-b px-2 border-gray-300 w-[150px] justify-between">
@@ -64,11 +76,13 @@ export default function CouponsPage() {
                            )}
                            OptionComponent={(props) => (
                               <span className="text-xs font-semibold capitalize">
-                                 {/*  */}
                                  {props.label}
                               </span>
                            )}
-                           onChange={(value) => {}}
+                           onChange={(value) => {
+                              const filterArr = [{ freeShipping: value === "1" }];
+                              ctrl.setParam({ filter: JSON.stringify(filterArr) });
+                           }}
                         />
                      </div>
                   </div>
@@ -85,50 +99,71 @@ export default function CouponsPage() {
                   checkEventList={[
                      {
                         label: "Disable",
-                        event: (params) => console.log(params), //
+                        event: (params) => console.log(params),
                      },
                      {
                         label: "Enable",
-                        event: (params) => console.log(params), //
+                        event: (params) => console.log(params),
                      },
                      {
                         label: "Delete",
-                        event: (params) => console.log(params), //
+                        event: (params) => console.log(params),
                      },
                   ]}
                   colums={[
-                     { key: "code", label: "Coupon Code", sort: true }, //
+                     { key: "coupon", label: "Coupon", sort: true },
                      { key: "start_date", label: "Start Date" },
                      { key: "end_date", label: "End Date" },
                      { key: "status", label: "Status", sort: true },
                      { key: "used_times", label: "Used Times", sort: true },
                   ]}
                   dataList={ctrl.coupons?.map((data) => {
+                     const start = formatDateTime(data?.startDate);
+                     const end = formatDateTime(data?.endDate);
                      return {
                         id: data.id,
-                        code: (
+                        coupon: (
                            <Link href={`/admin/coupons/${data?.id}`} className="text-[14px] font-semibold hover:underline">
-                              {data?.code}
+                              {data?.coupon}
                            </Link>
                         ),
-                        start_date: <span className="text-[14px]">{data?.start_date.toLocaleDateString("en-US", { year: "numeric", month: "short", day: "numeric" })}</span>,
-                        end_date: <span className="text-[14px]">{data?.end_date.toLocaleDateString("en-US", { year: "numeric", month: "short", day: "numeric" })}</span>,
+                        start_date: (
+                           <>
+                              <span className="text-[14px] block text-[#8c9196] mb-1">{start.date}</span>
+                              <span className="text-[14px] block text-[#8c9196] mb-3">{start.time}</span>
+                           </>
+                        ),
+                        end_date: (
+                           <>
+                              <span className="text-[14px] block text-[#8c9196] mb-1">{end.date}</span>
+                              <span className="text-[14px] block text-[#8c9196] mb-3">{end.time}</span>
+                           </>
+                        ),
                         status: (
                            <span className="text-[14px]">
-                              {data?.status === 1 ? ( //
+                              {data?.status ? (
                                  <GoDotFill size={20} color="#aee9d1" />
                               ) : (
                                  <GoDotFill size={20} color="#cecece" />
                               )}
                            </span>
                         ),
-                        used_times: <span className="text-[14px]">{data?.used_times}</span>,
+                        used_times: <span className="text-[14px]">{data?.usedTime}</span>,
                      };
                   })}
-                  onSort={(params) => {}}
+                  onSort={(param) => ctrl?.setParam(param)}
+                  pagination={{
+                     page: 1,
+                     totalPages: 3,
+                     total: 112,
+                     limit: 12,
+                     onPagination(param) {
+                        ctrl.setParam(param);
+                     },
+                  }}
                />
             </Card>
          </div>
-      </div>
+      </div >
    );
 }
