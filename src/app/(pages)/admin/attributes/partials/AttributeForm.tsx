@@ -26,7 +26,6 @@ export default function AttributeForm({ onSubmit, loading, patchValues }: Props)
    useEffect(() => {
       if (patchValues) {
          const attributeOption = patchValues?.attributeOption;
-         console.log(patchValues.AttributeGroupAttribute);
          setFields({
             attributeName: patchValues?.attributeName,
             attributeCode: patchValues?.attributeCode,
@@ -39,7 +38,7 @@ export default function AttributeForm({ onSubmit, loading, patchValues }: Props)
             ...(attributeOption ? { attributeOption } : {}),
          });
       }
-      return () => {};
+      return () => { };
    }, [patchValues]);
 
    return (

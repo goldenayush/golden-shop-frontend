@@ -63,7 +63,6 @@ class AdminProductService extends HttpInterceptor {
          try {
             const queryStr = query ? "?" + query : "";
             const { data } = await this.admin.get(`/products${queryStr}`);
-            console.log("data from get products...", data);
             return data;
          } catch (error) {
             return thunkAPI.rejectWithValue(this.errorMessage(error));

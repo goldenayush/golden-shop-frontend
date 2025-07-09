@@ -1,3 +1,4 @@
+
 "use client";
 import React from "react";
 import useOrdersController from "./orders.controller";
@@ -7,7 +8,7 @@ import { Badge, Dropdown } from "@/shared/ui";
 import { FaCaretUp, FaCircle, FaRegCircle } from "react-icons/fa";
 
 export default function OrdersPage() {
-   const { orders, isLoading } = useOrdersController();
+   const { orders, isLoading, setParam, debounce } = useOrdersController();
    if (isLoading) return <Loading />;
    return (
       <div className="p-7">
@@ -20,6 +21,8 @@ export default function OrdersPage() {
                      type="text"
                      className="border border-gray-300 rounded-sm text-[12px] px-3 py-1 placeholder:text-[12px] placeholder:font-semibold"
                      placeholder="Search"
+                     value={debounce?.searchKey}
+                     onChange={debounce?.onSearchChange}
                   />
                   <div>
                      <Dropdown //
@@ -45,7 +48,7 @@ export default function OrdersPage() {
                               {/*  */}
                            </div>
                         )}
-                        onChange={(value) => { }}
+                        onChange={(value) => setParam({ status: value })}
                      />
                   </div>
                   <div>
@@ -70,7 +73,7 @@ export default function OrdersPage() {
                               {props.label}
                            </span>
                         )}
-                        onChange={(value) => { }}
+                        onChange={(value) => setParam({ productType: value })}
                      />
                   </div>
                </div>
@@ -155,8 +158,15 @@ export default function OrdersPage() {
                   ),
                   total: <span className="text-[14px]">₹{data?.grandTotal}</span>,
                }))}
-               onSort={(param) => {
-                  console.log(param);
+               onSort={(param) => setParam(param)}
+               pagination={{
+                  page: 1,
+                  totalPages: 3,
+                  total: 112,
+                  limit: 12,
+                  onPagination(param) {
+                     setParam(param);
+                  },
                }}
             />
          </Card>
