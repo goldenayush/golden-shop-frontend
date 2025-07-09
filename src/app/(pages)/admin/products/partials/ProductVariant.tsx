@@ -39,7 +39,7 @@ export default function ProductVariant({ variantId, productId }: Props) {
          return;
       }
    };
-   
+
    const onCreateVariant = async (body: any) => {
       try {
          const payload = { ...body, productId, productImages: refUploadGallery.current.files };
@@ -51,17 +51,18 @@ export default function ProductVariant({ variantId, productId }: Props) {
 
    useEffect(() => {
       dispatch(adminAttributeService.getAllAttribute.api());
-      return () => {};
+      return () => { };
    }, []);
 
    useEffect(() => {
       if (variantId) {
          dispatch(adminProductVariantService.getVariantGroups.api(variantId));
       }
-      return () => {};
+      return () => { };
    }, [variantId]);
 
-   if (getAllAttribute.isLoading || getVariantGroups.isLoading) {
+   // if (getAllAttribute.isLoading || getVariantGroups.isLoading) {
+   if (getAllAttribute.isLoading) {
       return <Loading className="bg-white h-[150px] mt-3" />;
    }
    const selectedGroups = [
@@ -106,7 +107,7 @@ export default function ProductVariant({ variantId, productId }: Props) {
                                  {getAllAttribute.data?.map((attribute) => {
                                     const attributeGroupId = attribute.AttributeGroupAttribute[0].attributeGroupId;
                                     return (
-                                       <Checkbox //
+                                       <Checkbox
                                           key={attribute.id}
                                           id={attribute.id}
                                           label={attribute.attributeName}
