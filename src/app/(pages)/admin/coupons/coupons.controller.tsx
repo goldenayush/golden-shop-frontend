@@ -1,30 +1,39 @@
-const coupons = [
-   {
-      id: 1,
-      code: "ABC123",
-      start_date: new Date("2025-05-01"),
-      end_date: new Date("2025-06-01"),
-      status: 1,
-      used_times: 1,
-   },
-   {
-      id: 2,
-      code: "XYZ789",
-      start_date: new Date("2025-04-15"),
-      end_date: new Date("2025-05-15"),
-      status: 0,
-      used_times: 1,
-   },
-   {
-      id: 3,
-      code: "LMN456",
-      start_date: new Date("2025-03-10"),
-      end_date: new Date("2025-04-10"),
-      status: 1,
-      used_times: 1,
-   },
-];
+import { useAppDispatch, useAppSelector } from "@/libs/redux/hooks/hooks.redux";
+import { useDebounce } from "@/shared/hooks";
+import { useRouter, useSearchParams } from "next/navigation";
+import { use, useEffect } from "react";
+import { adminCouponsService } from "@/services/admin/admin-coupons.service";
+
 export default function useCouponsController() {
-   return { coupons };
+   const { getAllCoupons } = useAppSelector((state) => state.admin.coupons);
+   const dispatch = useAppDispatch();
+   const searchParams = useSearchParams();
+   const router = useRouter();
+   const debounce = useDebounce({
+      time: 1000,
+      callback(value) {
+         dispatch(adminCouponsService.getAllCoupons.api(`search=${value}`));
+      },
+   });
+   const setParam = (queryObj: any) => {
+      const params = new URLSearchParams(searchParams.toString());
+      for (const key in queryObj) {
+         params.set(key, queryObj[key]);
+      }
+      router.push("?" + params.toString());
+   };
+
+   useEffect(() => {
+      dispatch(adminCouponsService.getAllCoupons.api(searchParams.toString()));
+      return () => { };
+   }, [searchParams]);
+
+   return {
+      coupons: getAllCoupons.data,
+      isFetching: getAllCoupons.isLoading,
+      pagination: getAllCoupons.pagination,
+      debounce,
+      setParam,
+   };
 }
 

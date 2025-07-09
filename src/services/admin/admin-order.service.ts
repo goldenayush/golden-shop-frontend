@@ -12,7 +12,7 @@ const initialState = {
       isLoading: true,
       data: null as null | any,
    },
-   updateAdminOrderStatus: {
+   updateAdminMultipleStatus: {
       isLoading: false,
    },
    cancelAdminOrder: {
@@ -28,7 +28,7 @@ class AdminOrderService extends HttpInterceptor {
          try {
             const queryString = query ? "?" + query : "";
             const { data } = await this.admin.get(`/admin/orders/all-orders${queryString}`);
-            return data.data.orders;
+            return data.data;
          } catch (error) {
             return thunkAPI.rejectWithValue(this.errorMessage(error));
          }
@@ -39,7 +39,7 @@ class AdminOrderService extends HttpInterceptor {
          });
          builder.addCase(this.api.fulfilled, (state, action) => {
             state.getOrders.isLoading = false;
-            state.getOrders.data = action.payload;
+            state.getOrders.data = action.payload.orders;
             state.getOrders.pagination = action.payload;
          });
          builder.addCase(this.api.rejected, (state) => {
@@ -75,9 +75,10 @@ class AdminOrderService extends HttpInterceptor {
    };
 
    updateAdminOrderStatus = {
-      api: createAsyncThunk("!updateAdminOrderStatus", async (body: string, thunkAPI) => {
+      api: createAsyncThunk("!updateAdminOrderStatus", async (body: { status: string; ids: string[] }, thunkAPI) => {
          try {
             const { data } = await this.admin.patch(`/admin/orders/update-order-status`, body);
+            thunkAPI.dispatch(this.getOrders.api(""));
             return data;
          } catch (error) {
             return thunkAPI.rejectWithValue(this.errorMessage(error));
@@ -85,13 +86,13 @@ class AdminOrderService extends HttpInterceptor {
       }),
       reducer(builder: BuilderType) {
          builder.addCase(this.api.pending, (state) => {
-            state.updateAdminOrderStatus.isLoading = true;
+            state.updateAdminMultipleStatus.isLoading = true;
          });
          builder.addCase(this.api.fulfilled, (state) => {
-            state.updateAdminOrderStatus.isLoading = false;
+            state.updateAdminMultipleStatus.isLoading = false;
          });
          builder.addCase(this.api.rejected, (state) => {
-            state.updateAdminOrderStatus.isLoading = false;
+            state.updateAdminMultipleStatus.isLoading = false;
          });
       },
    };

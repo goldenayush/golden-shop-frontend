@@ -7,6 +7,7 @@ import useSingleOrderController from "./single-order.controller";
 import { Badge } from "@/shared/ui";
 import { FaRegCircle } from "react-icons/fa";
 import { useParams } from "next/navigation";
+import { formatDateTime } from "@/shared/functions/format-date-time";
 
 export default function SingleOrderPage() {
    const params = useParams();
@@ -37,13 +38,6 @@ export default function SingleOrderPage() {
       setCancelError("");
    };
 
-   function formatDateTime(isoString: string | undefined) {
-      if (!isoString) return { date: '', time: '' };
-      const dateObj = new Date(isoString);
-      const date = dateObj.toLocaleDateString('en-CA');
-      const time = dateObj.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true });
-      return { date, time };
-   }
 
    return (
       <div className="p-7">
@@ -57,8 +51,8 @@ export default function SingleOrderPage() {
                   >
                      &times;
                   </button>
-                  <h2 className="text-lg font-semibold mb-4">Cancel Order</h2>
-                  <label className="block text-sm mb-2">Reason for cancellation</label>
+                  <h2 className="text-lg font-semibold mb-4"> Are you sure you want to cancel this order?</h2>
+                  {/* <label className="block text-sm mb-2">Reason for cancellation</label> */}
                   {/* <textarea
                      className="w-full border border-gray-300 rounded p-2 mb-2 min-h-[80px] resize-none focus:outline-none focus:ring-2 focus:ring-[#008060]"
                      value={cancelReason}

@@ -1,6 +1,5 @@
-
 "use client";
-import React from "react";
+import React, { useState } from "react";
 import useOrdersController from "./orders.controller";
 import { Card, Loading, PageHeader, Table } from "@/shared/components";
 import Link from "next/link";
@@ -8,8 +7,23 @@ import { Badge, Dropdown } from "@/shared/ui";
 import { FaCaretUp, FaCircle, FaRegCircle } from "react-icons/fa";
 
 export default function OrdersPage() {
-   const { orders, isLoading, setParam, debounce } = useOrdersController();
-   if (isLoading) return <Loading />;
+   const { orders, pagination: apiPagination, isLoading, setParam, debounce, onUpdateOrderStatus } = useOrdersController();
+   // Local pagination state
+   const [pagination, setPagination] = useState({
+      page: 1,
+      limit: 10,
+   });
+   // Update local pagination and fetch data
+   const handlePagination = (param: any) => {
+      setPagination((prev) => ({
+         ...prev,
+         ...param,
+      }));
+   };
+   if (isLoading) {
+      <PageHeader heading="Coupons" />
+      return <Loading />;
+   }
    return (
       <div className="p-7">
          <PageHeader heading="Orders" />
@@ -48,7 +62,10 @@ export default function OrdersPage() {
                               {/*  */}
                            </div>
                         )}
-                        onChange={(value) => setParam({ status: value })}
+                        onChange={(value) => {
+                           setParam({ payment_status: value });
+
+                        }}
                      />
                   </div>
                   <div>
@@ -58,7 +75,7 @@ export default function OrdersPage() {
                            { value: "processing", label: "Processing" },
                            { value: "shipped", label: "Shipped" },
                            { value: "delivered", label: "Delivered" },
-                           { value: "canceled", label: "Canceled" },
+                           { value: "cancelled", label: "Cancelled" },
                            { value: "refunded", label: "Refunded" },
                         ]}
                         Component={(props) => (
@@ -73,7 +90,7 @@ export default function OrdersPage() {
                               {props.label}
                            </span>
                         )}
-                        onChange={(value) => setParam({ productType: value })}
+                        onChange={(value) => setParam({ shipmentStatus: value })}
                      />
                   </div>
                </div>
@@ -88,7 +105,7 @@ export default function OrdersPage() {
                checkEventList={[
                   {
                      label: "Mark as shipped",
-                     event: (param: any[]) => console.log(param), //
+                     event: (param: any[]) => onUpdateOrderStatus(param, "shipped"), //
                   },
                ]}
                colums={[
@@ -160,13 +177,12 @@ export default function OrdersPage() {
                }))}
                onSort={(param) => setParam(param)}
                pagination={{
-                  page: 1,
-                  totalPages: 3,
-                  total: 112,
-                  limit: 12,
-                  onPagination(param) {
-                     setParam(param);
-                  },
+                  page: pagination.page,
+                  totalPages: apiPagination?.totalPages || 1,
+                  total: apiPagination?.total || 0,
+                  limit: pagination.limit,
+                  totalCount: apiPagination?.totalCount || 0,
+                  onPagination: handlePagination,
                }}
             />
          </Card>

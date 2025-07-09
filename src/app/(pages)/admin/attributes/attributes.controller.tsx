@@ -37,7 +37,7 @@ export default function useAttributesController() {
 
    useEffect(() => {
       dispatch(adminAttributeService.getAllAttribute.api(searchParams.toString()));
-      return () => {};
+      return () => { };
    }, [searchParams]);
 
    return {

@@ -2,10 +2,10 @@ import { Checkbox, DatePicker, Switch, Textarea, TextField } from "@/shared/ui";
 import { ErrorMessage, Field, FormikProps } from "formik";
 import React from "react";
 import * as Yup from "yup";
-import { ICouponfields } from "../CouponForm";
+import { CreateCoupon } from "@/types/coupons.type";
 
 type Props = {
-   formik: FormikProps<ICouponfields>;
+   formik: FormikProps<CreateCoupon>;
 };
 
 export default function GeneralFormSection({ formik }: Props) {
@@ -16,9 +16,9 @@ export default function GeneralFormSection({ formik }: Props) {
                as={TextField}
                label="Coupon code"
                placeholder="Enter coupon code"
-               name="general.coupon_code"
+               name="coupon"
             />
-            <ErrorMessage component="small" className="field-error" name="general.coupon_code" />
+            <ErrorMessage component="small" className="field-error" name="coupon" />
          </div>
          <div className="col-span-12">
             <Field //
@@ -26,50 +26,51 @@ export default function GeneralFormSection({ formik }: Props) {
                rows={4}
                label="Description"
                placeholder="Description"
-               name="general.description"
+               name="description"
             />
-            <ErrorMessage component="small" className="field-error" name="general.description" />
+            <ErrorMessage component="small" className="field-error" name="description" />
          </div>
          <div className="col-span-12">
             <Field //
                as={Switch}
                eleSize="sm"
                label="Status"
-               name="general.status"
-               checked={formik?.values?.general?.status}
+               name="status"
+               checked={formik?.values?.status}
             />
          </div>
          <div className="col-span-12 md:col-span-4">
             <Field //
                as={TextField}
+               type="number"
                label="Discount amount"
                placeholder="Discount amount"
-               name="general.discount_amount"
+               name="discountAmount"
             />
-            <ErrorMessage component="small" className="field-error" name="general.discount_amount" />
+            <ErrorMessage component="small" className="field-error" name="discountAmount" />
          </div>
          <div className="col-span-12 md:col-span-4">
             <Field //
                as={DatePicker}
                label="Start date"
-               name="general.start_date"
+               name="startDate"
             />
-            <ErrorMessage component="small" className="field-error" name="general.start_date" />
+            <ErrorMessage component="small" className="field-error" name="startDate" />
          </div>
          <div className="col-span-12 md:col-span-4">
             <Field //
                as={DatePicker}
                label="End date"
-               name="general.end_date"
+               name="endDate"
             />
-            <ErrorMessage component="small" className="field-error" name="general.end_date" />
+            <ErrorMessage component="small" className="field-error" name="endDate" />
          </div>
          <div className="col-span-12">
             <Field //
                as={Checkbox}
-               name="general.isFree"
+               name="freeShipping"
                label="Free shipping?"
-               checked={formik?.values?.general?.isFree}
+               checked={formik?.values?.freeShipping}
                id="isFree"
             />
          </div>
@@ -78,11 +79,11 @@ export default function GeneralFormSection({ formik }: Props) {
 }
 
 export const generalFormSchemas = Yup.object().shape({
-   coupon_code: Yup.string().required("Coupon code is required"),
+   coupon: Yup.string().required("Coupon code is required"),
    description: Yup.string().required("Description is required"),
    status: Yup.boolean().required("Status is required"),
-   discount_amount: Yup.number().required("Discount amount is required"),
-   start_date: Yup.date().required("Start date is required"),
-   end_date: Yup.date().min(Yup.ref("start_date"), "End date cannot be before start date").required("End date is required"),
-   isFree: Yup.boolean().required("isFree is required"),
+   discountAmount: Yup.number().required("Discount amount is required"),
+   startDate: Yup.date().required("Start date is required"),
+   endDate: Yup.date().min(Yup.ref("startDate"), "End date cannot be before start date").required("End date is required"),
+   freeShipping: Yup.boolean().required("freeShipping is required"),
 });

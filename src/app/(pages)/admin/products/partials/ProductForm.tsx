@@ -64,8 +64,6 @@ export default function ProductForm({ onSubmit, loading, patchValues }: Props) {
    };
 
    useEffect(() => {
-      console.log("main products : ", patchValues);
-
       if (patchValues) {
          setFields({
             id: patchValues.id,
@@ -86,7 +84,7 @@ export default function ProductForm({ onSubmit, loading, patchValues }: Props) {
             ProductAttributeValueIndex: patchValues?.ProductAttributeValueIndex || [],
          } as any);
       }
-      return () => {};
+      return () => { };
    }, [patchValues]);
 
    return (

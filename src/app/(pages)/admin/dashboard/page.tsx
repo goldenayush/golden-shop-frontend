@@ -165,7 +165,7 @@ export default function Dashboard() {
                      <div className="flex space-x-3 items-center">
                         <Dot color="#aee9d1" />
                         <div className="self-center text-[14px]">
-                           {totalSalesData?.cancelledPercentage} of orders cancelled
+                           {totalSalesData?.cancelledPercentage}% of orders cancelled
                         </div>
                      </div>
                   </div>
@@ -182,7 +182,9 @@ export default function Dashboard() {
                         >
                            No data to display
                         </div>
+
                      ) : (
+
                         <ResponsiveContainer width="100%" height="100%">
                            <PieChart>
                               <Pie
@@ -201,8 +203,8 @@ export default function Dashboard() {
                   </div>
                </Card>
             </div>
-         </div>
-      </div>
+         </div >
+      </div >
    );
 }
 

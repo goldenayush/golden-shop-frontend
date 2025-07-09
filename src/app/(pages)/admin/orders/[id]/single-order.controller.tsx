@@ -7,7 +7,6 @@ export default function singleOrderController() {
    const dispatch = useAppDispatch();
    const { id } = useParams<{ id: string }>();
    const { getAdminSingleOrders } = useAppSelector((state) => state.admin.adminOrder);
-   console.log("...", getAdminSingleOrders);
 
    const router = useRouter();
 

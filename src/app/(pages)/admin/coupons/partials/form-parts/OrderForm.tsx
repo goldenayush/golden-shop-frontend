@@ -4,11 +4,11 @@ import React from "react";
 import * as Yup from "yup";
 import { FaMinus } from "react-icons/fa";
 import { MdAdd } from "react-icons/md";
-import { ICouponfields } from "../CouponForm";
 import SelectKeyAttributes from "../../../components/SelectKeyAttributes";
+import { CreateCoupon } from "@/types/coupons.type";
 
 type Props = {
-   formik: FormikProps<ICouponfields>;
+   formik: FormikProps<CreateCoupon>;
 };
 
 const priceOptions = [
@@ -20,8 +20,8 @@ const priceOptions = [
    { label: "Equal OR SMALLER", value: "equal_or_smaller" },
 ];
 const defaultOptions = [
-   { label: "In", value: "In" },
-   { label: "Not In", value: "Not In" },
+   { label: "IN", value: "IN" },
+   { label: "Not In", value: "NOT_IN" },
 ];
 const keys = [
    {
@@ -60,24 +60,25 @@ export default function OrderConditions({ formik }: Props) {
                   as={TextField} //
                   label="Minimum purchase amount"
                   placeholder="Enter minimum purchase amount"
-                  name="order_conditions.min_purchase_amount"
+                  name="condition.orderTotal"
                />
-               <ErrorMessage component="small" className="field-error" name="order_conditions.min_purchase_amount" />
+               <ErrorMessage component="small" className="field-error" name="condition.orderTotal" />
             </div>
             <div className="col-span-12">
                <Field
-                  as={TextField} //
+                  as={TextField}
+                  type="number"
                   label="Minimum purchase qty"
                   placeholder="Enter Minimum purchase qty"
-                  name="order_conditions.min_purchase_qty"
+                  name="condition.orderQty"
                />
-               <ErrorMessage component="small" className="field-error" name="order_conditions.min_purchase_qty" />
+               <ErrorMessage component="small" className="field-error" name="condition.orderQty" />
             </div>
             <div className="col-span-12">
                <FieldArray
-                  name="order_conditions.list"
+                  name="condition.requiredProducts"
                   render={(arrayHelper) => {
-                     const orderConditionsList = formik?.values?.order_conditions?.list || [];
+                     const requiredProductsList = formik?.values?.condition?.requiredProducts || [];
                      return (
                         <>
                            <button //
@@ -90,31 +91,25 @@ export default function OrderConditions({ formik }: Props) {
                            <div className="relative overflow-x-auto">
                               <table className="w-full text-sm text-left rtl:text-right text-gray-500">
                                  <thead className="text-sm font-semibold text-gray-700 capitalize">
-                                    <th scope="col" className="p-2">
-                                       Key
-                                    </th>
-                                    <th scope="col" className="p-2">
-                                       Operator
-                                    </th>
-                                    <th scope="col" className="p-2">
-                                       Value
-                                    </th>
-                                    <th scope="col" className="p-2">
-                                       Minimum quantity
-                                    </th>
-                                    <th></th>
+                                    <tr>
+                                       <th scope="col" className="p-2">Key</th>
+                                       <th scope="col" className="p-2">Operator</th>
+                                       <th scope="col" className="p-2">Value</th>
+                                       <th scope="col" className="p-2">Minimum quantity</th>
+                                       <th></th>
+                                    </tr>
                                  </thead>
                                  <tbody>
-                                    {orderConditionsList?.map((item: any, index: number) => (
-                                       <tr key={`order_conditions_item-${index}`}>
+                                    {requiredProductsList?.map((item: any, index: number) => (
+                                       <tr key={`required_products_item-${index}`}>
                                           <td className="p-2">
                                              <Select //
                                                 placeholder="Select"
                                                 options={keys}
-                                                value={(orderConditionsList?.[index] as any)?.key || ""}
+                                                value={item?.key || ""}
                                                 onChange={(e) => {
-                                                   formik.setFieldValue(`order_conditions.list.${index}.key`, e.target.value);
-                                                   formik.setFieldValue(`order_conditions.list.${index}.values`, []);
+                                                   formik.setFieldValue(`condition.requiredProducts.${index}.key`, e.target.value);
+                                                   formik.setFieldValue(`condition.requiredProducts.${index}.value`, []);
                                                 }}
                                                 required
                                              />
@@ -123,7 +118,7 @@ export default function OrderConditions({ formik }: Props) {
                                              <Field //
                                                 as={Select}
                                                 placeholder="Select"
-                                                name={`order_conditions.list.${index}.operator`}
+                                                name={`condition.requiredProducts.${index}.operator`}
                                                 options={item?.key !== "price" ? defaultOptions : priceOptions}
                                                 required
                                              />
@@ -131,35 +126,41 @@ export default function OrderConditions({ formik }: Props) {
                                           <td className="p-2">
                                              {item?.key === "price" ? (
                                                 <Field
-                                                   as={TextField} //
+                                                   as={TextField}
+                                                   type="number"
                                                    placeholder="Enter this price"
-                                                   name={`order_conditions.list.${index}.values`}
+                                                   name={`condition.requiredProducts.${index}.value`}
                                                    required
                                                 />
                                              ) : (
                                                 <SelectKeyAttributes
                                                    disabled={!item?.key}
                                                    multiple
-                                                   selcted={item?.values || []}
+                                                   selcted={item?.value || []}
                                                    keyName={item?.key}
                                                    title={`Choose ${item?.key}`}
                                                    setValue={(values) => {
                                                       const updatedValues = values?.map((element) => ({
-                                                         id: element?.id || "",
-                                                         name: element?.name || "",
-                                                         value: element?.value || "",
-                                                      }));
-                                                      formik.setFieldValue(`order_conditions.list.${index}.values`, updatedValues);
+                                                         id: element?.id,
+                                                      })); formik.setFieldValue(`condition.requiredProducts.${index}.value`, updatedValues);
                                                    }}
+                                                // setValue={(values) => {
+                                                //    const updatedValues = values?.map((element) => element?.id || "");
+                                                //    formik.setFieldValue(
+                                                //       `condition.requiredProducts.${index}.value`,
+                                                //       values?.map((element) => element?.id).filter(Boolean)
+                                                //    );
+                                                // }}
                                                 />
                                              )}
                                           </td>
                                           <td className="p-2">
-                                             <Field //
+                                             <Field
+                                                type="number"
                                                 style={{ width: "80px" }}
                                                 as={TextField}
                                                 placeholder="Enter"
-                                                name={`order_conditions.list.${index}.min_quantity`}
+                                                name={`condition.requiredProducts.${index}.qty`}
                                                 required
                                              />
                                           </td>
@@ -184,7 +185,7 @@ export default function OrderConditions({ formik }: Props) {
 }
 
 export const orderConditionsSchemas = Yup.object().shape({
-   min_purchase_amount: Yup.number().min(0, "Minimum purchase amount cannot be negative").required("Minimum purchase amount is required"),
-   min_purchase_qty: Yup.number().min(0, "Minimum purchase qty cannot be negative").required("Minimum purchase qty is required"),
-   list: Yup.array(),
+   orderTotal: Yup.number().min(0, "Minimum purchase amount cannot be negative").required("Minimum purchase amount is required"),
+   orderQty: Yup.number().min(0, "Minimum purchase qty cannot be negative").required("Minimum purchase qty is required"),
+   requiredProducts: Yup.array(),
 });

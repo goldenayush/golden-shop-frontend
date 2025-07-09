@@ -2,58 +2,41 @@ import { Radio, Select, TextField } from "@/shared/ui";
 import { ErrorMessage, Field, FieldArray, FormikProps } from "formik";
 import React from "react";
 import * as Yup from "yup";
-
 import { FaMinus } from "react-icons/fa";
 import { MdAdd } from "react-icons/md";
-import { ICouponfields } from "../CouponForm";
 import SelectKeyAttributes from "../../../components/SelectKeyAttributes";
+import { CreateCoupon } from "@/types/coupons.type";
 
 type Props = {
-   formik: FormikProps<ICouponfields>;
+   formik: FormikProps<CreateCoupon>;
 };
 
 const discountTypes = [
-   { id: 1, name: "Fixed discount to entire order" },
-   { id: 2, name: "Percentage discount to entire order" },
-   { id: 3, name: "Fixed discount to specific products" },
-   { id: 4, name: "Percentage discount to specific products" },
-   { id: 5, name: "Buy X get Y" },
+   { id: "fixed_discount_to_entire_order", name: "Fixed discount to entire order" },
+   { id: "percentage_discount_to_entire_order", name: "Percentage discount to entire order" },
+   { id: "fixed_discount_to_specific_products", name: "Fixed discount to specific products" },
+   { id: "percentage_discount_to_specific_products", name: "Percentage discount to specific products" },
+   { id: "buy_x_get_y", name: "Buy X get Y" },
 ];
 
 const priceOptions = [
-   { label: "Equal", value: "equal" },
-   { label: "NOT Equal", value: "not_equal" },
-   { label: "GREATER", value: "greater" },
-   { label: "GREATER OR Equal", value: "greater_or_equal" },
-   { label: "SMALLER", value: "smaller" },
-   { label: "Equal OR SMALLER", value: "equal_or_smaller" },
+   { label: "Equal", value: "EQUAL" },
+   { label: "NOT Equal", value: "NOT_EQUAL" },
+   { label: "GREATER", value: "GREATER" },
+   { label: "GREATER OR Equal", value: "GREATER_OR_EQUAL" },
+   { label: "SMALLER", value: "SMALLER" },
+   { label: "Equal OR SMALLER", value: "EQUAL_OR_SMALLER" },
 ];
 const defaultOptions = [
-   { label: "In", value: "In" },
-   { label: "Not In", value: "Not In" },
+   { label: "In", value: "IN" },
+   { label: "Not In", value: "NOT IN" },
 ];
 
 const keys = [
-   {
-      label: "categories", //
-      value: "categories",
-   },
-   {
-      label: "collections", //
-      value: "collections",
-   },
-   {
-      label: "attribute groups",
-      value: "attribute_groups",
-   },
-   {
-      label: "sku",
-      value: "sku",
-   },
-   {
-      label: "price",
-      value: "price",
-   },
+   { label: "Collection", value: "collection" },
+   { label: "Attribute Group", value: "attribute_group" },
+   { label: "SKU", value: "sku" },
+   { label: "Price", value: "price" },
 ];
 
 export default function DiscountType({ formik }: Props) {
@@ -72,20 +55,21 @@ export default function DiscountType({ formik }: Props) {
                <div className="mb-2" key={`discount-type-${idx}`}>
                   <Radio //
                      label={type?.name}
-                     name="discount_type.name"
+                     name="discountType.name"
                      value={type.id}
-                     checked={+formik?.values?.discount_type?.name === type?.id}
+                     checked={formik?.values?.discountType === type?.id}
                      onChange={() => {
-                        formik.setFieldValue("discount_type.name", type.id);
-                        formik.setFieldValue("discount_type.list", []);
+                        formik.setFieldValue("discountType.name", type.id);
+                        formik.setFieldValue("targetProducts.products", []);
                      }}
+
                   />
                </div>
             );
          })}
-         <ErrorMessage component="small" className="field-error" name="discount_type.name" />
-         {/* target_products */}
-         {[3, 4].includes(+formik?.values?.discount_type?.name) && (
+         <ErrorMessage component="small" className="field-error" name="discountType" />
+         {/* targetProducts */}
+         {["fixed_discount_to_specific_products", "percentage_discount_to_specific_products"].includes(formik?.values?.discountType) && (
             <div>
                <h3 className="py-2 font-semibold">Target products</h3>
                <div className="flex items-center gap-1 text-[14px]">
@@ -95,35 +79,32 @@ export default function DiscountType({ formik }: Props) {
                      eleSize="sm"
                      style={{ width: "40px" }}
                      placeholder="10"
-                     name="discount_type.target_products"
+                     name="targetProducts.maxQty"
                   />
-                  <span>quantity of products are matched bellow conditions(All)</span>
+                  <span>quantity of products are matched below conditions (All)</span>
                </div>
-               <ErrorMessage component="small" className="field-error" name="discount_type.target_products" />
+               <ErrorMessage component="small" className="field-error" name="targetProducts.maxQty" />
             </div>
          )}
          <div className="mt-3">
             <FieldArray
-               name="discount_type.list"
+               name="targetProducts.products"
                render={({ remove, push }) => {
-                  const list = formik?.values?.discount_type?.list || [];
-                  switch (+formik?.values?.discount_type?.name) {
-                     case 3:
-                     case 4:
+                  const list = formik?.values?.targetProducts?.products || [];
+
+                  switch (formik?.values?.discountType) {
+                     case "fixed_discount_to_specific_products":
+                     case "percentage_discount_to_specific_products":
                         return (
                            <>
                               <table className="w-full text-sm text-left rtl:text-right text-gray-500">
                                  <thead className="text-sm font-semibold text-gray-700 capitalize">
-                                    <th scope="col" className="p-2">
-                                       Key
-                                    </th>
-                                    <th scope="col" className="p-2">
-                                       Operator
-                                    </th>
-                                    <th scope="col" className="p-2">
-                                       Value
-                                    </th>
-                                    <th></th>
+                                    <tr>
+                                       <th scope="col" className="p-2">Key</th>
+                                       <th scope="col" className="p-2">Operator</th>
+                                       <th scope="col" className="p-2">Value</th>
+                                       <th></th>
+                                    </tr>
                                  </thead>
                                  <tbody>
                                     {list?.map((item: any, idx: number) => {
@@ -134,16 +115,16 @@ export default function DiscountType({ formik }: Props) {
                                                    required
                                                    placeholder="Select"
                                                    options={keys}
-                                                   value={(formik.values.discount_type.list?.[idx] as any)?.key || ""}
+                                                   value={item?.key || ""}
                                                    onChange={(e) => {
-                                                      formik.setFieldValue(`discount_type.list.${idx}.key`, e.target.value);
-                                                      formik.setFieldValue(`discount_type.list.${idx}.values`, []);
+                                                      formik.setFieldValue(`targetProducts.products.${idx}.key`, e.target.value);
+                                                      formik.setFieldValue(`targetProducts.products.${idx}.value`, []);
                                                    }}
                                                 />
                                                 <ErrorMessage //
                                                    component="small"
                                                    className="field-error"
-                                                   name={`discount_type.list.${idx}.key`}
+                                                   name={`targetProducts.products.${idx}.key`}
                                                 />
                                              </td>
                                              <td className="p-2">
@@ -151,13 +132,13 @@ export default function DiscountType({ formik }: Props) {
                                                    required
                                                    as={Select}
                                                    placeholder="Select"
-                                                   name={`discount_type.list.${idx}.operator`}
+                                                   name={`targetProducts.products.${idx}.operator`}
                                                    options={item?.key !== "price" ? defaultOptions : priceOptions}
                                                 />
                                                 <ErrorMessage //
                                                    component="small"
                                                    className="field-error"
-                                                   name={`discount_type.list.${idx}.operator`}
+                                                   name={`targetProducts.products.${idx}.operator`}
                                                 />
                                              </td>
                                              <td className="p-2">
@@ -166,29 +147,32 @@ export default function DiscountType({ formik }: Props) {
                                                       required
                                                       as={TextField}
                                                       placeholder="Enter the price"
-                                                      name={`discount_type.list.${idx}.values`}
+                                                      name={`targetProducts.products.${idx}.value`}
                                                    />
                                                 ) : (
-                                                   <SelectKeyAttributes //
-                                                      disabled={!item?.key}
-                                                      multiple
-                                                      selcted={item?.values}
-                                                      title={`Choose ${item?.key}`}
-                                                      keyName={item?.key}
-                                                      setValue={(values) => {
-                                                         const updatedValues = values?.map((element) => ({
-                                                            id: element?.id || "",
-                                                            name: element?.name || "",
-                                                            value: element?.value || "",
-                                                         }));
-                                                         formik.setFieldValue(`discount_type.list.${idx}.values`, updatedValues);
-                                                      }}
-                                                   />
+                                                   <>
+
+                                                      <SelectKeyAttributes //
+                                                         disabled={!item?.key}
+                                                         multiple
+                                                         selcted={item?.value}
+                                                         title={`Choose ${item?.key}`}
+                                                         keyName={item?.key}
+                                                         setValue={(values) => {
+
+                                                            const updatedValues = values?.map((element) =>
+                                                               element?.value || "");
+                                                            formik.setFieldValue(`targetProducts.products.${idx}.value`, updatedValues);
+                                                         }}
+                                                      />
+                                                   </>
+
                                                 )}
+
                                                 <ErrorMessage //
                                                    component="small"
                                                    className="field-error"
-                                                   name={`discount_type.list.${idx}.value`}
+                                                   name={`targetProducts.products.${idx}.value`}
                                                 />
                                              </td>
                                              <td className="p-2">
@@ -209,91 +193,114 @@ export default function DiscountType({ formik }: Props) {
                               </button>
                            </>
                         );
-                     case 5:
+                     case "buy_x_get_y":
                         return (
                            <>
                               <table className="w-full text-sm text-left rtl:text-right text-gray-500">
                                  <thead className="text-sm font-semibold text-gray-700 capitalize">
-                                    <th scope="col" className="p-2">
-                                       Sku
-                                    </th>
-                                    <th scope="col" className="p-2">
-                                       X
-                                    </th>
-                                    <th scope="col" className="p-2">
-                                       Y
-                                    </th>
-                                    <th scope="col" className="p-2">
-                                       Max of Y
-                                    </th>
-                                    <th scope="col" className="p-2">
-                                       Discount percent
-                                    </th>
-                                    <th></th>
+                                    <tr>
+                                       <th scope="col" className="p-2">Sku</th>
+                                       <th scope="col" className="p-2">Buy Qty</th>
+                                       <th scope="col" className="p-2">Get Qty</th>
+                                       <th scope="col" className="p-2">Max Y</th>
+                                       <th scope="col" className="p-2">Discount</th>
+                                       <th></th>
+                                    </tr>
                                  </thead>
                                  <tbody>
-                                    {list?.map((item: any, idx: number) => (
-                                       <tr key={`23sgfr-${idx}`}>
-                                          <td className="p-2">
-                                             <SelectKeyAttributes //
-                                                selcted={item?.sku ? [item?.sku] : []}
-                                                title="Choose SKU"
-                                                keyName="sku"
-                                                setValue={(values) => {
-                                                   formik.setFieldValue(
-                                                      `discount_type.list.${idx}.sku.id`, //
-                                                      values[0]?.id
-                                                   );
-                                                   formik.setFieldValue(
-                                                      `discount_type.list.${idx}.sku.name`, //
-                                                      values[0]?.name
-                                                   );
-                                                   formik.setFieldValue(
-                                                      `discount_type.list.${idx}.sku.value`, //
-                                                      values[0]?.value
-                                                   );
-                                                }}
-                                             />
-                                          </td>
-                                          <td className="p-2">
-                                             <Field //
-                                                as={TextField}
-                                                placeholder="Buy qtu"
-                                                name={`discount_type.list.${idx}.buy_qtu`}
-                                                required
-                                             />
-                                          </td>
-                                          <td className="p-2">
-                                             <Field //
-                                                as={TextField}
-                                                placeholder="Get qtu"
-                                                name={`discount_type.list.${idx}.get_qtu`}
-                                                required
-                                             />
-                                          </td>
-                                          <td className="p-2">
-                                             <Field //
-                                                as={TextField}
-                                                placeholder="Max of Y"
-                                                name={`discount_type.list.${idx}.max_y`}
-                                                required
-                                             />
-                                          </td>
-                                          <td className="p-2">
-                                             <Field //
-                                                as={TextField}
-                                                placeholder="Discount percent"
-                                                name={`discount_type.list.${idx}.discount_percent`}
-                                                required
-                                             />
-                                          </td>
-                                          <td className="p-2">
-                                             <button type="button" className="rounded-sm cursor-pointer text-xs text-red-600 font-semibold" onClick={() => remove(idx)}>
-                                                <FaMinus />
-                                             </button>
-                                          </td>
-                                       </tr>
-                                    ))}
+                                    {list?.map((item: any, idx: number) => {
+                                       return (
+                                          <tr key={`23sgfr-${idx}`}>
+                                             <td className="p-2">
+                                                {/* <SelectKeyAttributes
+                                                   selcted={item?.sku ? [item?.sku] : []}
+                                                   title="Choose SKU"
+                                                   keyName="sku"
+                                                   setValue={(values) => {
+                                                      console.log("Item.sku:", item.sku, values);
+                                                      const skuId = values[0]?.id || "";
+                                                      //  console.log("Selected SKU ID:", item.sku);
+                                                      let x = [...list, { id: skuId }]
+                                                      formik.setFieldValue(
+                                                         `buyxGety.${idx}.sku`,
+                                                         skuId
+                                                      )
+                                                   }
+                                                   }
+                                                /> */}
+
+                                                <SelectKeyAttributes //
+                                                   selcted={item?.sku ? [item?.sku] : []}
+                                                   title="Choose SKU"
+                                                   keyName="sku"
+                                                   setValue={(values) => {
+
+                                                      formik.setFieldValue(
+                                                         `buyxGety.${idx}.id`, //
+                                                         values[0]?.id
+                                                      );
+                                                      formik.setFieldValue(
+                                                         `buyxGety.${idx}.name`, //
+                                                         values[0]?.name
+                                                      );
+                                                      formik.setFieldValue(
+                                                         `buyxGety.${idx}.value`, //
+                                                         values[0]?.value
+                                                      );
+                                                   }}
+                                                />
+
+
+
+
+
+
+
+                                             </td>
+                                             <td className="p-2">
+                                                <Field
+                                                   type="number"
+                                                   as={TextField}
+                                                   placeholder="Buy Qty"
+                                                   name={`buyxGety.${idx}.buyQty`}
+                                                   required
+                                                />
+                                             </td>
+                                             <td className="p-2">
+                                                <Field
+                                                   type="number"
+                                                   as={TextField}
+                                                   placeholder="Get Qty"
+                                                   name={`buyxGety.${idx}.getQty`}
+                                                   required
+                                                />
+                                             </td>
+                                             <td className="p-2">
+                                                <Field
+                                                   type="number"
+                                                   as={TextField}
+                                                   placeholder="Max Y"
+                                                   name={`buyxGety.${idx}.maxY`}
+                                                   required
+                                                />
+                                             </td>
+                                             <td className="p-2">
+                                                <Field
+                                                   type="number"
+                                                   as={TextField}
+                                                   placeholder="Discount"
+                                                   name={`buyxGety.${idx}.discount`}
+                                                   required
+                                                />
+                                             </td>
+                                             <td className="p-2">
+                                                <button type="button" className="rounded-sm cursor-pointer text-xs text-red-600 font-semibold" onClick={() => remove(idx)}>
+                                                   <FaMinus />
+                                                </button>
+                                             </td>
+                                          </tr>
+                                       );
+                                    })}
                                  </tbody>
                               </table>
                               <button type="button" className="py-1 rounded-sm cursor-pointer mb-3 text-sm flex items-center gap-2 mt-3" onClick={() => push({})}>
@@ -307,21 +314,22 @@ export default function DiscountType({ formik }: Props) {
                }}
             />
          </div>
-         {/* target_products */}
+         {/* targetProducts */}
       </>
    );
 }
 
 export const discountTypeSchemas = Yup.object().shape({
-   name: Yup.string().required("name is required"),
-   target_products: Yup.number()
-      .typeError("target_products must be a number")
-      .when("name", {
-         is: (val: any) => [3, 4].includes(+val),
-         then: (schema) => schema.required("target_products is required").integer("target_products must be an integer").min(0, "target_products must be at least 0"),
-         otherwise: (schema) => schema.notRequired(),
-      })
-      .integer("target_products must be an integer")
-      .min(0, "target_products must be at least 0"),
-   list: Yup.array(),
+   discountType: Yup.string().required("Discount type is required"),
+   targetProducts: Yup.object().shape({
+      maxQty: Yup.number()
+         .typeError("Max quantity must be a number")
+         .when("$discountType", {
+            is: (val: any) => ["fixed_discount_to_specific_products", "percentage_discount_to_specific_products"].includes(val),
+            then: (schema) => schema.required("Max quantity is required").integer("Must be an integer").min(0, "At least 0"),
+            otherwise: (schema) => schema.notRequired(),
+         }),
+      products: Yup.array(),
+   }),
+   buyxGety: Yup.array(),
 });

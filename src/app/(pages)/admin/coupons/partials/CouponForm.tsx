@@ -1,6 +1,6 @@
 "use client";
 import { Form, Formik } from "formik";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import GeneralFormSection, { generalFormSchemas } from "./form-parts/GeneralForm";
 import DiscountType, { discountTypeSchemas } from "./form-parts/DiscountTypeForm";
 import OrderConditions, { orderConditionsSchemas } from "./form-parts/OrderForm";
@@ -8,52 +8,62 @@ import CustomerForm, { customerSchemas } from "./form-parts/CustomerForm";
 import * as Yup from "yup";
 import { Card, PageHeader } from "@/shared/components";
 import { Button } from "@/shared/ui";
+import { CreateCoupon } from "@/types/coupons.type";
 
-const couponfields = {
-   general: {
-      coupon_code: "2025HOLI",
-      description: "Use code 2025HOLI at checkout and enjoy FLAT 20% OFF on all lenses, frames, and goggles.",
-      status: true,
-      discount_amount: 1500,
-      start_date: new Date(),
-      end_date: new Date(),
-      isFree: true,
-   },
-   discount_type: {
-      name: "3",
-      target_products: "12",
-      list: [],
-   },
-   order_conditions: {
-      min_purchase_amount: 1500,
-      min_purchase_qty: 5,
-      list: [],
-   },
-   customer_conditions: {
-      customer_id: "2",
-      email: "user@gmail.com",
-      purchase_amount: "1500",
-   },
+
+const defaultValues: CreateCoupon = {
+   status: true,
+   description: "",
+   discountAmount: 0,
+   freeShipping: false,
+   discountType: "",
+   coupon: "",
+   targetProducts: { maxQty: 0, products: [] },
+   condition: { orderQty: 0, orderTotal: 0, requiredProducts: [] },
+   userCondition: { emails: "", groups: [], purchased: 0 },
+   buyxGety: [],
+   maxUsesTimePerCoupon: 0,
+   maxUsesTimePerCustomer: 0,
+   startDate: new Date().toISOString().split("T")[0],
+   endDate: new Date().toISOString().split("T")[0],
 };
-
-export type ICouponfields = typeof couponfields;
-export default function CouponForm() {
-   const [initialValues, setInitialValues] = useState(couponfields);
-   const onSubmit = (value: any) => {
-      console.log(value);
-   };
+type Props = {
+   onSubmit: (data: any) => Promise<void>;
+   loading?: boolean;
+   patchValues?: CreateCoupon | null;
+};
+export default function CouponForm({ onSubmit, loading, patchValues }: Props) {
+   const [initialValues, setInitialValues] = useState<CreateCoupon>(defaultValues);
+   useEffect(() => {
+      if (patchValues) {
+         setInitialValues({
+            status: patchValues.status,
+            description: patchValues.description,
+            discountAmount: patchValues.discountAmount,
+            freeShipping: patchValues.freeShipping,
+            discountType: patchValues.discountType,
+            coupon: patchValues.coupon,
+            targetProducts: patchValues.targetProducts,
+            condition: patchValues.condition,
+            userCondition: patchValues.userCondition,
+            buyxGety: patchValues.buyxGety,
+            maxUsesTimePerCoupon: patchValues.maxUsesTimePerCoupon,
+            maxUsesTimePerCustomer: patchValues.maxUsesTimePerCustomer,
+            startDate: patchValues.startDate ? new Date(patchValues.startDate).toISOString().split("T")[0] : new Date().toISOString().split("T")[0],
+            endDate: patchValues.endDate ? new Date(patchValues.endDate).toISOString().split("T")[0] : new Date().toISOString().split("T")[0],
+         });
+      }
+      return () => { }
+   }, [patchValues]);
    return (
       <div className="p-7">
-         <PageHeader backLink="/admin/coupons" heading="Create a new coupon" />
+         <PageHeader backLink="/admin/coupons" heading={patchValues ? "Update Coupon" : "Create a new coupon"} />
          <Formik
+            enableReinitialize={Boolean(patchValues)}
             initialValues={initialValues}
             onSubmit={onSubmit}
-            validationSchema={Yup.object().shape({
-               general: generalFormSchemas,
-               discount_type: discountTypeSchemas,
-               order_conditions: orderConditionsSchemas,
-               customer_conditions: customerSchemas,
-            })}>
+            validationSchema={couponValidationSchema}
+         >
             {(formik) => (
                <Form>
                   <Card heading="General" className="p-5 grid grid-cols-12 gap-3">
@@ -78,7 +88,7 @@ export default function CouponForm() {
                         </Button>
                      </div>
                      <div>
-                        <Button type="submit" className="bg-[#008060] text-white py-2 px-4 rounded-sm text-[14px] font-semibold cursor-pointer">
+                        <Button type="submit" className="bg-[#008060] text-white py-2 px-4 rounded-sm text-[14px] font-semibold cursor-pointer" loading={loading}>
                            Save
                         </Button>
                      </div>
@@ -86,6 +96,47 @@ export default function CouponForm() {
                </Form>
             )}
          </Formik>
-      </div>
+      </div >
    );
 }
+const couponValidationSchema = Yup.object().shape({
+   // General fields
+   coupon: Yup.string().required("Coupon code is required"),
+   description: Yup.string().required("Description is required"),
+   status: Yup.boolean().required("Status is required"),
+   discountAmount: Yup.number().required("Discount amount is required"),
+   startDate: Yup.date().required("Start date is required"),
+   endDate: Yup.date().min(Yup.ref("startDate"), "End date cannot be before start date").required("End date is required"),
+   freeShipping: Yup.boolean().required("freeShipping is required"),
+   // Discount type fields
+   discountType: Yup.string().required("Discount type is required"),
+
+   // Order conditions
+   condition: Yup.object().shape({
+      orderQty: Yup.number().required("Order quantity is required"),
+      orderTotal: Yup.number().required("Order total is required"),
+      requiredProducts: Yup.array(),
+   }),
+   // Customer conditions
+   userCondition: Yup.object().shape({
+      emails: Yup.string().required("Email is required"),
+      groups: Yup.array().required("Groups are required"),
+      purchased: Yup.number().required("Purchased amount is required"),
+   }),
+   buyxGety: Yup.array().of(
+      Yup.object().shape({
+         buyQty: Yup.number()
+            .typeError("Buy Qty must be a number"),
+
+         getQty: Yup.number()
+            .typeError("Get Qty must be a number"),
+         maxY: Yup.number()
+            .typeError("Max Y must be a number"),
+
+         discount: Yup.number()
+            .typeError("Discount must be a number")
+      })
+   ),
+   maxUsesTimePerCoupon: Yup.number(),
+   maxUsesTimePerCustomer: Yup.number(),
+});

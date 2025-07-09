@@ -207,7 +207,9 @@ function List({ dataList, colums, checkable, onSort, pagination, checkEventList 
                                        </button>
                                     </React.Fragment>
                                  )}
-                                 <span className="text-sm font-normal">{pagination?.total} records</span>
+                                 <span className="text-sm font-normal">{pagination?.
+                                    totalCount
+                                 } records</span>
                               </div>
                            )}
                         </div>
