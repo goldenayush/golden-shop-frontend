@@ -75,7 +75,7 @@ class AdminOrderService extends HttpInterceptor {
    };
 
    updateAdminOrderStatus = {
-      api: createAsyncThunk("!updateAdminOrderStatus", async (body: string, thunkAPI) => {
+      api: createAsyncThunk("!updateAdminOrderStatus", async (body: { status: string; ids: string[] }, thunkAPI) => {
          try {
             const { data } = await this.admin.patch(`/admin/orders/update-order-status`, body);
             thunkAPI.dispatch(this.getOrders.api(""));
