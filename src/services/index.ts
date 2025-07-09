@@ -13,10 +13,12 @@ import { adminTaxSettingReducer } from "./admin/admin-tax-setting.service";
 import { adminCmsReducer } from "./admin/admin-cms.service";
 import { adminCustomerReducer } from "./admin/admin-customer.service";
 import { adminProductVariantReducer } from "./admin/admin-product-variant.service";
+import { adminDashboardReducer } from "./admin/admin-dashborad.service";
 
 const rootReducer = combineReducers({
    admin: combineReducers({
       auth: authAdminReducer,
+      dashboard: adminDashboardReducer,
       category: adminCategoryReducer,
       attribute: adminAttributeReducer,
       collection: adminCollectionReducer,

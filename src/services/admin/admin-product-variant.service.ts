@@ -2,6 +2,7 @@ import HttpInterceptor from "@/libs/interceptors/http.interceptor";
 import { ActionReducerMapBuilder, createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { arrayPipeline } from "@/shared/functions";
 import AdminFileUpload from "@/libs/admin-file-uploader/admin-file-uploader";
+import { adminProductActions } from "./admin-product.service";
 
 const initialState = {
    createVariantGroup: {
@@ -35,7 +36,7 @@ class AdminProductVariantService extends HttpInterceptor {
       api: createAsyncThunk("createVariantGroup", async (body, thunkAPI) => {
          try {
             const { data } = await this.admin.post("/admin/products/create-variant-group", body);
-           
+            thunkAPI.dispatch(adminProductActions.setID(data.id));
             return data;
          } catch (error) {
             return thunkAPI.rejectWithValue(this.errorMessage(error));
